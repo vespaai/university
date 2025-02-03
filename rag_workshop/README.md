@@ -13,14 +13,14 @@ Vespa.ai is an AI application platform with an extensive history that started at
 
 
 # Workshop preparation 
-Before we start our workshop it is required that you clone this [repository](https://github.com/pkobziak/rag_workshop)
+Before we start our workshop it is required that you clone this [repository](https://github.com/vespaai/university/tree/main/rag_workshop)
 
 <pre>
-git clone https://github.com/pkobziak/rag_workshop.git
+git clone https://vespaai/university.git
 </pre>
 
 What you will find in this repository:
-  - [workshop](https://github.com/pkobziak/rag_workshop/tree/main/rag) - rag application which you will need to modify and deploy
+  - [workshop](https://github.com/vespaai/university/tree/main/rag_workshop/rag) - rag application which you will need to modify and deploy
 
 
 Assuming that prerequisites are met, you have been able to deploy "news" application and you have access to the [Vespa Cloud](https://cloud.vespa.ai/) you can continue with the lab. 
