@@ -16,7 +16,7 @@ Vespa.ai is an AI application platform with an extensive history that started at
 Before we start our workshop it is required that you clone this [repository](https://github.com/vespaai/university/tree/main/rag_workshop)
 
 <pre>
-git clone https://vespaai/university.git
+git clone https://vespaai/university/university.git
 </pre>
 
 What you will find in this repository:
