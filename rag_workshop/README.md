@@ -18,7 +18,7 @@ Please visit our [Blog](https://blog.vespa.ai/) to learn more about ML/AI and ho
 Before we start our workshop it is required that you clone this [repository](https://github.com/vespaai/university/tree/main/rag_workshop)
 
 <pre>
-git clone https://vespaai/university/university.git
+git clone https://github.com/vespaai/university
 </pre>
 
 What you will find in this repository:
