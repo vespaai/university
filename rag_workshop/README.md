@@ -42,7 +42,8 @@ vespa auth cert
 - [ instance ] - any name which wil be used as a label for your application - any label
 
 # Vespa rag architecture 
-![llms-chain](https://github.com/user-attachments/assets/9a2cab33-8215-4283-bf1a-f61f328b4b94)
+![llms-chain](https://github.com/user-attachments/assets/2b29e253-fd33-45c7-96da-e2a4b9dbd499)
+
 
 # What is a Vespa Application?
 
