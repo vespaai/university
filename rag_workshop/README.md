@@ -331,9 +331,11 @@ Amazing you finished vespa quick guide! Now look at other vespa examples.
 
 
 #Vespa additional resources
-- Whenever you need to build solution which required advanced search capability either AI chatbot, E-Comerce personalised experience or Document search you will find good examples [here](https://github.com/vespa-engine/sample-apps)
+- Whenever you need to build solution which requires advanced search capability, either AI chatbot, E-Comerce personalised experience or Document search you will find good examples [here](https://github.com/vespa-engine/sample-apps)
 - Vespa offers extensive tensor support see [Advent of Tensors](https://blog.vespa.ai/advent-of-tensors-2023/)
-- Vespa provides  Python API called [PyVespa](https://pyvespa.readthedocs.io/en/latest/index.html)
+- Vespa provides Python API called [PyVespa](https://pyvespa.readthedocs.io/en/latest/index.html)
+
+Thank You!
 
 
 
