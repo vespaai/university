@@ -11,6 +11,8 @@
 
 Vespa.ai is an AI application platform with an extensive history that started at Yahoo. It powers some of the world’s largest and most demanding solutions including Yahoo itself, Perplexity, BigData.com, and Vinted. This long-standing ( 25+ years) evolution has culminated in a robust system that supports large-scale search and recommendation applications.
 
+Please visit our [Blog](https://blog.vespa.ai/) to learn more about ML/AI and how to move it into production.
+
 
 # Workshop preparation 
 Before we start our workshop it is required that you clone this [repository](https://github.com/vespaai/university/tree/main/rag_workshop)
@@ -28,10 +30,13 @@ Assuming that prerequisites are met, you have been able to deploy "news" applica
 
 # What is a Vespa Application?
 
-A Vespa application is a complete package that includes document schemas, service definitions, search chains, and integrations for features like embeddings and LLM-based processing.
+A [Vespa application](https://docs.vespa.ai/en/application-packages.html) is a complete package that includes document schemas, service definitions, search chains, and integrations for features like embeddings and LLM-based processing.
 Two key configuration files form the backbone of any Vespa application:
 	•	[schema.sd](https://docs.vespa.ai/en/schemas.html): Defines the document schema including fields, indexing,  embedder configurations, rankers specifications and other configurations.
 	•	[services.xml](https://docs.vespa.ai/en/reference/services.html): Specifies the deployment details and the Vespa services (container, search, document processing, etc.) definitiona and configuration.
+
+# Embedding 
+A common technique is to map unstructured data like text or images to points in an abstract vector space and then do computation in that space. For example, retrieve similar data by finding nearby points in the vector space, or using the vectors as input to a neural net. This mapping is referred to as embedding. Read more about embedding and embedding management in this [blog post](https://blog.vespa.ai/tailoring-frozen-embeddings-with-vespa/). 
 
 # Embedding Configuration
 Schema Definition (schema.sd)
@@ -292,7 +297,7 @@ vespa deploy --wait 120
 
 # Testing RAG Searcher
 
-Test query using local LLM inference with contextual RAG retrieval:
+Test query using local LLM inference with contextual RRF retrieval:
 
 ```bash
 vespa query \
@@ -307,7 +312,7 @@ vespa query \
     traceLevel=1
 ```
 
-Test query using OpenAI LLM inference with basic retrieval:
+Test query using OpenAI LLM inference with RRF retrieval:
 ```bash
 vespa query \
     --timeout 120 \
@@ -321,6 +326,15 @@ vespa query \
     prompt="@query -  Answer to the query in the details, list all the documents provided and its content. See documents below:{context}" \
     traceLevel=1
 ```
+
+Amazing you finished vespa quick guide! Now look at other vespa examples.
+
+
+#Vespa additional resources
+- Whenever you need to build solution which required advanced search capability either AI chatbot, E-Comerce personalised experience or Document search you will find good examples [here](https://github.com/vespa-engine/sample-apps)
+- Vespa offers extensive tensor support see [Advent of Tensors](https://blog.vespa.ai/advent-of-tensors-2023/)
+- Vespa provides  Python API called [PyVespa](https://pyvespa.readthedocs.io/en/latest/index.html)
+
 
 
 
