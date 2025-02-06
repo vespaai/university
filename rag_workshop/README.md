@@ -246,17 +246,10 @@ OpenAI hosted LLM client:
 ```xml
     <component id="openai" class="ai.vespa.llm.clients.OpenAI">
       <config name = "ai.vespa.llm.clients.llm-client">
-        <apiKeySecretName>openai-api-key</apiKeySecretName>
       </config>
     </component>
 ```
-You will also need to define secret store configuration in the services.xml file.
 
-```xml
-    <secrets>
-            <apiKey vault="my-vault" name="openai-api-key" />
-    </secrets>
-```
 
 Note that the OpenAI client requires an API key. Please refer [secret store](https://cloud.vespa.ai/en/security/secret-store) documentation how to add it to your application. You need to enter your personal OpenAI API key to the secret store.
 
@@ -328,6 +321,7 @@ Test query using OpenAI LLM inference with RRF retrieval:
 ```bash
 vespa query \
     --timeout 120 \
+    --header="X-LLM-API-KEY:<your openai token>"
     queryProfile=vector-search\
     query_text="manhattan project" \
     query="Are Medical Tours costa Rica Popular?" \
