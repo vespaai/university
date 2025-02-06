@@ -209,6 +209,11 @@ and fill the content of the file with the following:
 </query-profile-type>
 ```
 
+# Testing - Application Deployment
+Once you have configured the query profile you can deploy your application.
+```bash
+vespa deploy --wait 120
+```
 
 # Query profile configuration testing
   Now you can test your query profile by running the following command:
