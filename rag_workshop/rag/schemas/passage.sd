@@ -12,16 +12,12 @@ schema passage {
   }
 
   # Place your field generated with embedder here, note its outside of document specification since its generated. 
+  # Embedder requires additional configuration in services.xml file
 
   fieldset default {
     fields: text
   }
 
-  rank-profile default {
-    first-phase {
-      expression: bm25(text)
-    }
-  }
+  # Place your ranker configuration here
 
- 
 }
