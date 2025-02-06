@@ -41,6 +41,9 @@ vespa auth cert
 - [ application ] - the name of your application, you can choose any name</br>
 - [ instance ] - any name which wil be used as a label for your application - any label
 
+# Vespa rag architecture 
+![llms-chain](https://github.com/user-attachments/assets/9a2cab33-8215-4283-bf1a-f61f328b4b94)
+
 # What is a Vespa Application?
 
 A [Vespa application](https://docs.vespa.ai/en/application-packages.html) is a complete package that includes document schemas, service definitions, search chains, and integrations for features like embeddings and LLM-based processing.
