@@ -28,7 +28,7 @@ What you will find in this repository:
 Assuming that prerequisites are met, you have been able to deploy "news" application and you have access to the [Vespa Cloud](https://cloud.vespa.ai/) you can continue with the lab. 
 
 # Prerequisites reminder
-To be able to follow the excercides listed here [Vespa.ai cloud acocunt]([Free trial](https://vespa.ai/free-trial/)) had to be created. When you got your tenant it was required to configure your previously installed [Vespa Cli](https://docs.vespa.ai/en/vespa-cli.html).
+To be able to follow the excercises in this workshop, [Vespa.ai cloud acocunt]([Free trial](https://vespa.ai/free-trial/)) had to be created. When you got your tenant it was required to configure your previously installed [Vespa Cli](https://docs.vespa.ai/en/vespa-cli.html).
 
 The command below had to be run from within application package directory.
 ```bash
