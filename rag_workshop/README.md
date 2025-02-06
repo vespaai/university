@@ -38,12 +38,13 @@ Two key configuration files form the backbone of any Vespa application:
 # Embedding 
 A common technique is to map unstructured data like text or images to points in an abstract vector space and then do computation in that space. For example, retrieve similar data by finding nearby points in the vector space, or using the vectors as input to a neural net. This mapping is referred to as embedding. Read more about embedding and embedding management in this [blog post](https://blog.vespa.ai/tailoring-frozen-embeddings-with-vespa/). 
 
-# Embedding Configuration
+# Document schema and embedding Configuration
 Schema Definition (schema.sd)
 
-Within your passge.sd file, you’ll define a document schema that includes the [embedding](https://docs.vespa.ai/en/embedding.html) field and rank profile. 
+Within your passge.sd file, you’ll define a document schema that includes the [embedding](https://docs.vespa.ai/en/embedding.html) field and rank profile (Ranking profile for RRF raking is showed in the next section).
+Please use example below to see how add embedder into your application.
 
-For example:
+Example:
 
 ```javascript
 schema passage {
@@ -55,9 +56,11 @@ schema passage {
       indexing: summary | index
       index: enable-bm25
     }
+  }
 
   #field generated during ingest phase, notice its outside of the document specification
-  #embed embedder_name runs embedding on the field text
+  #embed embedder_name runs embedding on the field text, it has to be specified inside services.xml file
+
   field embedding type tensor<float>(x[384]) {
     indexing {
       ( input text || "" ) | embed e5 | attribute | index # Index keyword enables HNSW index
@@ -71,10 +74,13 @@ schema passage {
     fields: text
   }
 
- # Other configuration details like:
- # rank-profiles,
- # fieldset
- # summary
+  rank-profile default {
+    first-phase {
+      expression {
+        bm25(text)
+      }
+    }
+ }
 
 }
 ```
@@ -82,7 +88,7 @@ schema passage {
 # Hybrid RRF Ranking
 
 The [ranking](https://docs.vespa.ai/en/ranking.html) configuration is crucial for delivering relevant results. Vespa supports a novel staged rankig with custom expressions. 
-In this lab we will focus on Hybrid RRF ranking approach which combines vector similarity with traditional ranking signals. 
+In this lab we will focus on Hybrid RRF ranking approach which combines vector similarity with traditional lexical ranking (bm25). 
 
 Within your schema configuration , you would configure a profile like:
 
@@ -130,13 +136,14 @@ To enable embedding generation, you need to configure the embedder in the servic
         </prepend>
     </component>
 ```
+Once finished base configuration lets test it!
 
-# Application Deployment
+# Testing - Application Deployment
 Once you have configured the embedding you can deploy your application.
 ```bash
 vespa deploy --wait 120
 ```
-# Data Feeding
+# Testing - Data Feeding
 To feed your data into Vespa, you can use the vespa feed command.
 ```bash
 vespa feed ext/docs.jsonl
