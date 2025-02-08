@@ -11,6 +11,8 @@
 
 Vespa.ai is an AI application platform with an extensive history that started at Yahoo. It powers some of the world’s largest and most demanding solutions including Yahoo itself, Perplexity, BigData.com, and Vinted. This long-standing ( 25+ years) evolution has culminated in a robust system that supports large-scale search and recommendation applications.
 
+Please visit our [Blog](https://blog.vespa.ai/) to learn more about ML/AI and how to move it into production.
+
 
 # Workshop preparation 
 Before we start our workshop it is required that you clone this [repository](https://github.com/vespaai/university/tree/main/rag_workshop)
@@ -25,20 +27,41 @@ What you will find in this repository:
 
 Assuming that prerequisites are met, you have been able to deploy "news" application and you have access to the [Vespa Cloud](https://cloud.vespa.ai/) you can continue with the lab. 
 
+# Prerequisites reminder
+To be able to follow the excercises in this workshop, [Vespa.ai cloud acocunt]([Free trial](https://vespa.ai/free-trial/)) had to be created. When you got your tenant it was required to configure your previously installed [Vespa Cli](https://docs.vespa.ai/en/vespa-cli.html).
+
+The command below had to be run from within application package directory.
+```bash
+vespa config set target cloud
+vespa config set application <tenant>.<application>.<instance>
+vespa auth login
+vespa auth cert
+```
+- [ tenant ] - your Vespa Cloud tenant name</br>
+- [ application ] - the name of your application, you can choose any name</br>
+- [ instance ] - any name which wil be used as a label for your application - any label
+
+# Vespa rag architecture 
+![llms-chain](https://github.com/user-attachments/assets/2b29e253-fd33-45c7-96da-e2a4b9dbd499)
+
 
 # What is a Vespa Application?
 
-A Vespa application is a complete package that includes document schemas, service definitions, search chains, and integrations for features like embeddings and LLM-based processing.
+A [Vespa application](https://docs.vespa.ai/en/application-packages.html) is a complete package that includes document schemas, service definitions, search chains, and integrations for features like embeddings and LLM-based processing.
 Two key configuration files form the backbone of any Vespa application:
 	•	[schema.sd](https://docs.vespa.ai/en/schemas.html): Defines the document schema including fields, indexing,  embedder configurations, rankers specifications and other configurations.
 	•	[services.xml](https://docs.vespa.ai/en/reference/services.html): Specifies the deployment details and the Vespa services (container, search, document processing, etc.) definitiona and configuration.
 
-# Embedding Configuration
+# Embedding 
+A common technique is to map unstructured data like text or images to points in an abstract vector space and then do computation in that space. For example, retrieve similar data by finding nearby points in the vector space, or using the vectors as input to a neural net. This mapping is referred to as embedding. Read more about embedding and embedding management in this [blog post](https://blog.vespa.ai/tailoring-frozen-embeddings-with-vespa/). 
+
+# Document schema and embedding Configuration
 Schema Definition (schema.sd)
 
-Within your passge.sd file, you’ll define a document schema that includes the [embedding](https://docs.vespa.ai/en/embedding.html) field and rank profile. 
+Within your passge.sd file, you’ll define a document schema that includes the [embedding](https://docs.vespa.ai/en/embedding.html) field and rank profile (Ranking profile for RRF raking is showed in the next section).
+Please use example below to see how add embedder into your application.
 
-For example:
+Example:
 
 ```javascript
 schema passage {
@@ -50,9 +73,11 @@ schema passage {
       indexing: summary | index
       index: enable-bm25
     }
+  }
 
   #field generated during ingest phase, notice its outside of the document specification
-  #embed embedder_name runs embedding on the field text
+  #embed embedder_name runs embedding on the field text, it has to be specified inside services.xml file
+
   field embedding type tensor<float>(x[384]) {
     indexing {
       ( input text || "" ) | embed e5 | attribute | index # Index keyword enables HNSW index
@@ -66,10 +91,13 @@ schema passage {
     fields: text
   }
 
- # Other configuration details like:
- # rank-profiles,
- # fieldset
- # summary
+  rank-profile default {
+    first-phase {
+      expression {
+        bm25(text)
+      }
+    }
+ }
 
 }
 ```
@@ -77,7 +105,7 @@ schema passage {
 # Hybrid RRF Ranking
 
 The [ranking](https://docs.vespa.ai/en/ranking.html) configuration is crucial for delivering relevant results. Vespa supports a novel staged rankig with custom expressions. 
-In this lab we will focus on Hybrid RRF ranking approach which combines vector similarity with traditional ranking signals. 
+In this lab we will focus on Hybrid RRF ranking approach which combines vector similarity with traditional lexical ranking (bm25). 
 
 Within your schema configuration , you would configure a profile like:
 
@@ -125,13 +153,14 @@ To enable embedding generation, you need to configure the embedder in the servic
         </prepend>
     </component>
 ```
+Once finished base configuration lets test it!
 
-# Application Deployment
+# Testing - Application Deployment
 Once you have configured the embedding you can deploy your application.
 ```bash
 vespa deploy --wait 120
 ```
-# Data Feeding
+# Testing - Data Feeding
 To feed your data into Vespa, you can use the vespa feed command.
 ```bash
 vespa feed ext/docs.jsonl
@@ -197,6 +226,11 @@ and fill the content of the file with the following:
 </query-profile-type>
 ```
 
+# Testing - Application Deployment
+Once you have configured the query profile you can deploy your application.
+```bash
+vespa deploy --wait 120
+```
 
 # Query profile configuration testing
   Now you can test your query profile by running the following command:
@@ -229,17 +263,10 @@ OpenAI hosted LLM client:
 ```xml
     <component id="openai" class="ai.vespa.llm.clients.OpenAI">
       <config name = "ai.vespa.llm.clients.llm-client">
-        <apiKeySecretName>openai-api-key</apiKeySecretName>
       </config>
     </component>
 ```
-You will also need to define secret store configuration in the services.xml file.
 
-```xml
-    <secrets>
-            <apiKey vault="my-vault" name="openai-api-key" />
-    </secrets>
-```
 
 Note that the OpenAI client requires an API key. Please refer [secret store](https://cloud.vespa.ai/en/security/secret-store) documentation how to add it to your application. You need to enter your personal OpenAI API key to the secret store.
 
@@ -292,7 +319,7 @@ vespa deploy --wait 120
 
 # Testing RAG Searcher
 
-Test query using local LLM inference with contextual RAG retrieval:
+Test query using local LLM inference with contextual RRF retrieval:
 
 ```bash
 vespa query \
@@ -307,10 +334,11 @@ vespa query \
     traceLevel=1
 ```
 
-Test query using OpenAI LLM inference with basic retrieval:
+Test query using OpenAI LLM inference with RRF retrieval:
 ```bash
 vespa query \
     --timeout 120 \
+    --header="X-LLM-API-KEY:<your openai token>"
     queryProfile=vector-search\
     query_text="manhattan project" \
     query="Are Medical Tours costa Rica Popular?" \
@@ -321,6 +349,17 @@ vespa query \
     prompt="@query -  Answer to the query in the details, list all the documents provided and its content. See documents below:{context}" \
     traceLevel=1
 ```
+
+Amazing you finished vespa quick guide! Now look at other vespa examples.
+
+
+#Vespa additional resources
+- Whenever you need to build solution which requires advanced search capability, either AI chatbot, E-Comerce personalised experience or Document search you will find good examples [here](https://github.com/vespa-engine/sample-apps)
+- Vespa offers extensive tensor support see [Advent of Tensors](https://blog.vespa.ai/advent-of-tensors-2023/)
+- Vespa provides Python API called [PyVespa](https://pyvespa.readthedocs.io/en/latest/index.html)
+
+Thank You!
+
 
 
 

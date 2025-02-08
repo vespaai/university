@@ -25,8 +25,11 @@
     </search>
 
     <!-- 
-        Here you should define GPU node for LLM inference
+        Here you should define GPU node for LLM inference, modify nodes entry
     -->
+    <nodes>
+        <node hostalias="node1" />
+    </nodes>
   </container>
   <content id="msmarco" version="1.0">
     <redundancy>1</redundancy>
