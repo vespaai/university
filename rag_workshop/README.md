@@ -340,7 +340,7 @@ vespa query \
     --timeout 120 \
     --header="X-LLM-API-KEY:<your openai token>"
     queryProfile=vector-search\
-    query_text="manhattan project" \
+    query_text="Medical Tours costa Rica" \
     query="Are Medical Tours costa Rica Popular?" \
     hits=5 \
     searchChain=openai \
