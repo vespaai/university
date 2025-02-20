@@ -1,12 +1,7 @@
 Add Hugging face embedder to services.xml
 
     <component id="e5" type="hugging-face-embedder">
-        <transformer-model url="https://github.com/vespa-engine/sample-apps/raw/master/simple-semantic-search/model/e5-small-v2-int8.onnx"/>
-        <tokenizer-model url="https://raw.githubusercontent.com/vespa-engine/sample-apps/master/simple-semantic-search/model/tokenizer.json"/>
-        <prepend> <!-- E5 prompt instructions -->
-            <query>query:</query>
-            <document>passage:</document>
-        </prepend>
+        <transformer-model model-id="e5-small-v2"/>
     </component>
 
 Add field embedding into product.sd
