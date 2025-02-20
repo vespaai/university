@@ -172,7 +172,6 @@ Once you have configured the query profile you can deploy your application.
         --timeout 120 \
         queryProfile=vector-search\
         query_text="Medical Tours costa Rica" \
-        ranking.profile="closeness" \
         "input.query(q_embedding)"="embed(@query_text)"
 
 
