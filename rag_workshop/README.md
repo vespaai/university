@@ -142,15 +142,11 @@ In the [services.xml](https://docs.vespa.ai/en/reference/services.html), you con
 
 # Embedding Configuration
 To enable embedding generation, you need to configure the embedder in the services.xml file. This example defines an E5 embedder from Huggingface. Vespa supports multiple embedding models. See [embedding documentation](https://docs.vespa.ai/en/embedding.html) for more details.
+Please refer to [Vespa Model Hub](https://cloud.vespa.ai/en/model-hub) to see more available models
 
 ```xml
     <component id="e5" type="hugging-face-embedder">
-        <transformer-model url="https://github.com/vespa-engine/sample-apps/raw/master/simple-semantic-search/model/e5-small-v2-int8.onnx"/>
-        <tokenizer-model url="https://raw.githubusercontent.com/vespa-engine/sample-apps/master/simple-semantic-search/model/tokenizer.json"/>
-        <prepend> <!-- E5 prompt instructions -->
-            <query>query:</query>
-            <document>passage:</document>
-        </prepend>
+        <transformer-model model-id="e5-small-v2"/>
     </component>
 ```
 Once finished base configuration lets test it!
