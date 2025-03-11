@@ -1,3 +1,6 @@
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
 {
    "yql": "select * from product where —--->WHERE QUERY CLAUSE GOES HERE <—-----",
    "presentation.summary": "medium",
