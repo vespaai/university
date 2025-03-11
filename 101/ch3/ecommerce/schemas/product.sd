@@ -38,13 +38,18 @@ schema product {
     }
 
     field embedding type tensor<float>(x[384]) {
+      # we need attribute to compute the distance, index for the HNSW graph and summary to check the tensor value for debugging. You might want to remove “summary” in production
       indexing: attribute | index | summary
       attribute {
+        # distance used. Assuming document and query floats are normalized to unit value (-1 to 1), we can compute cosine similarity and use 1-cosine as the distance metric
         distance-metric: prenormalized-angular
       }
       index {
+        # enable HNSW for approximate nearest neighbor search
         hnsw {
+          # higher values tend to trade memory for accuracy, M in the original implementation
           max-links-per-node: 16 # Same as the default
+          # higher values tend to trade write CPU time for accuracy, ef_construction in the original implementation
           neighbors-to-explore-at-insert: 200 # Same as the default
         }
       }
