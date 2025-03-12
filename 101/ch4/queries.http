@@ -28,12 +28,13 @@ vespa query \
     --timeout 60 \
     --header="X-LLM-API-KEY:insert-api-key-here" \
     query="what kind of mini stencils do you have for sale?" \
+    presentation.summary=medium \
     hits=5 \
     searchChain=openai \
     format=sse \
     traceLevel=1
 
-### OpenAI HTTP command. The response comes back as a stream
+### OpenAI HTTP command with more options (e.g. hybrid search). The response comes back as a stream
 curl -H "Content-Type:application/json" -H "X-LLM-API-KEY:insert-api-key-here" https://e6384e36.c4ba1d52.z.vespa-app.cloud/search/ -d '{
     "yql": "select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(embedding,q_embedding))",
     "ranking.profile": "rrf",
