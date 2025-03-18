@@ -1,1 +1,1 @@
-{"id": "id:ecommerce:product::1", "fields": {"field1": "foo", "field2": "and bar"}}
+{"id": "id:ecommerce:product::1", "fields": {"product_name": "one product", "avg_rating": 5.0}}
