@@ -1,3 +1,6 @@
+# NOTE: The approximate_query_string parameter isn't needed
+#       It's just to show the source string for the q_embedding vector below it.
+
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
