@@ -30,7 +30,7 @@ cd ecommerce
 vespa auth cert
 vespa deploy --wait 900
 cd ..
-vespa document put smaple-doc.json
+vespa document put sample-doc.json
 vespa document get id:ecommerce:product::1
 vespa visit
 vespa query "yql=select * from product where true"
