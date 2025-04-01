@@ -59,7 +59,7 @@ schema product {
   #     expression: max(bm25(title), bm25(description))
   #   }
   #   global-phase {
-  #     # TODO: you have a closeness() function inherited and a best_bm25() function defined here
+  #     # TODO: you have a inherited firstPhase using closeness and a best_bm25() function defined here
   #     # now define the reciprocal rank fusion expression
   #     rerank-count: 200
   #   }
