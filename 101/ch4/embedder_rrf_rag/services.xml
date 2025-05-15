@@ -16,11 +16,11 @@
             </client>
         </clients>
 
+        <!-- TODO: define a huggingface embedder component. -->
         <!-- See https://docs.vespa.ai/en/embedding.html#huggingface-embedder -->
-        <!-- TODO -->
 
-        <!-- Setup the client to OpenAI -->
-        <!-- TODO -->
+        <!-- TODO: Setup the client to OpenAI. NOTE: you only use OpenAI for RAG, not for embeddings
+            At least in this exercise. -->
 
         <!--
             <document-api> tells the container that it should accept documents for indexing. Through the
@@ -45,7 +45,7 @@
              - Reference: https://docs.vespa.ai/en/query-api.html
              - Searchers: https://docs.vespa.ai/en/searcher-development.html
         -->
-        <search/> <!-- TODO in here, define a search chain pointing to your OpenAI client -->
+        <search/> <!-- TODO in here, define a search chain pointing to your OpenAI client (only for RAG, not for embeddings) -->
 
         <!--
             <nodes> specifies the nodes that should run this cluster.
