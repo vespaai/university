@@ -1,5 +1,8 @@
 ### group by item. Show first 3
-curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cloud/search/ -d '{
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
   "yql": "select * from purchase where true | all(
     group(item)
     max(3)
@@ -7,10 +10,13 @@ curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cl
       output(count())
     )
   )"
-}'
+}
 
 ### order by count descending
-curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cloud/search/ -d '{
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
   "yql": "select * from purchase where true | all(
     # group by item
     group(item)
@@ -22,10 +28,13 @@ curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cl
         output(count())
     )
   )"
-}'
+}
 
 ### use total $$$ instead of count. But output count as well
-curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cloud/search/ -d '{
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
   "yql": "select * from purchase where true | all(
     group(item)
     order(-sum(price))
@@ -34,10 +43,13 @@ curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cl
         output(count())
     )
   )"
-}'
+}
 
 ### sales by day
-curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cloud/search/ -d '{
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
   "yql": "select * from purchase where true | all(
     group(
       # this will take the epoch timestamp and create
@@ -49,10 +61,13 @@ curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cl
         output(count())
     )
   )"
-}'
+}
 
 ### sales by day, by item
-curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cloud/search/ -d '{
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
   "yql": "select * from purchase where true | all(
     group(time.date(date))
     each(
@@ -73,11 +88,14 @@ curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cl
         )
     )
   )"
-}'
+}
 
 ### top items, but also show 3 sample orders
 # --> limit 0 to not show order list below
-curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cloud/search/ -d '{
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
   "yql": "select * from purchase where true limit 0 | all(
     # group by item as before
     group(item)
@@ -95,13 +113,16 @@ curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cl
         )
     )
   )"
-}'
+}
 
 ### item cardinality (HyperLogLog++) and highest price
-curl -H "Content-Type:application/json" https://ebe5e25b.d78af55d.z.vespa-app.cloud/search/ -d '{
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
   "yql": "select * from purchase where true | all(
     group(item)
     output(count())
     output(max(price))
   )"
-}'
+}
