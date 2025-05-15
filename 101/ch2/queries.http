@@ -1,10 +1,16 @@
 ### query
-curl -H "Content-Type:application/json" https://e01bdc0f.ee10cd00.z.vespa-app.cloud/search/ -d '{
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
   "yql": "select * from product where Description contains \"premium cotton\" limit 5",
   "presentation.summary": "short"
-}'
+}
 
 ### group by color
-curl -H "Content-Type:application/json" https://e01bdc0f.ee10cd00.z.vespa-app.cloud/search/ -d '{
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
   "yql": "select * from product where true | all(group(PrimaryColor) each(output(count())))"
-}'
+}
