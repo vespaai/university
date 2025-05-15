@@ -90,7 +90,7 @@ Content-Type: application/json
   )"
 }
 
-### top items, but also show 3 sample orders
+### most sold items, but also show 3 sample orders
 # --> limit 0 to not show order list below
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
@@ -99,9 +99,8 @@ Content-Type: application/json
   "yql": "select * from purchase where true limit 0 | all(
     # group by item as before
     group(item)
-    order(-sum(price))
+    order(-count())
     each(
-        output(sum(price))
         output(count())
 
         # top 3 orders for each item
