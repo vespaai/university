@@ -4,15 +4,15 @@ cd $HOME
 
 tgt=$(vespa config get target -c never 2>&1)
 if [ "$tgt" != "target = cloud" ]; then
-	msg="Configure the CLI: ${tgt}"
-	echo "Problem:" "$msg"
+	msg="Configure the CLI to target Vespa Cloud: vespa config set target cloud"
+	echo "$msg"
 	exit 1
 fi
 
 app=$(vespa config get application -c never 2>&1)
 if [ "$app" = "application = <unset>" ]; then
-	msg="Configure the CLI: ${app}"
-	echo "Problem:" "$msg"
+	msg="Configure the CLI: vespa config set application <tenant>.<application>"
+	echo "$msg"
 	exit 1
 fi
 app=${app#application = }
@@ -23,8 +23,8 @@ case $auth in
     Success:*)
 	: ok ;;
     *)
-	msg="Need to do: vespa auth login"
-	echo "Problem:" "$msg"
+	msg="Not logged in, please run: vespa auth login"
+	echo "$msg"
 	exit 1
 	;;
 esac
@@ -32,7 +32,9 @@ esac
 if [ -f .vespa/${app}/data-plane-private-key.pem ]; then
 	: ok
 else
-	echo "Problem: need to run 'vespa auth cert' and deploy"
+	msg="Problem: need to run 'vespa auth cert' and deploy an application"
+	echo "$msg"
+	exit 1
 fi
 
 status=$(vespa status -c never 2>&1)
@@ -40,8 +42,10 @@ case $status in
     *Container*ready*mtls*)
 	: ok ;;
     *)
-	msg="Deploy an application: ${status}"
-	echo "Problem:" "$msg"
+	msg="Problem: No ready application"
+	echo "$msg"
+	echo "Output from 'vespa status' is:"
+	vespa status
 	exit 1
 	;;
 esac
