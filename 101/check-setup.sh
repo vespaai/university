@@ -39,7 +39,7 @@ fi
 
 status=$(vespa status -c never 2>&1)
 case $status in
-    *Container*ready*mtls*)
+    *Container*is\ ready*mtls*)
 	: ok ;;
     *)
 	msg="Problem: No ready application"
