@@ -1,0 +1,34 @@
+### query, minimal sanity check
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where true"
+}
+
+### another query, simple select
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where Gender contains \"men\""
+}
+
+### another query, note that single-quotes are allowed:
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where Gender contains 'women'"
+}
+
+### counts by color
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where true limit 0 | all(group(PrimaryColor) each(output(count())))"
+}
+
+### get a document using document/v1
+GET https://<mTLS_ENDPOINT_DNS_GOES_HERE>/document/v1/ecommerce/product/docid/10009781
