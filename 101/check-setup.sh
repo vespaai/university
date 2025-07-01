@@ -42,10 +42,12 @@ case $status in
     *Container*is\ ready*mtls*)
 	: ok ;;
     *)
-	msg="Problem: No ready application"
-	echo "$msg"
+	msg="Problem: No ready application (did you run 'vespa deploy --wait 300'?)"
 	echo "Output from 'vespa status' is:"
 	vespa status
+	echo "########################################################"
+	echo "$msg"
+	echo "########################################################"
 	exit 1
 	;;
 esac
