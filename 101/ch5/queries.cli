@@ -1,16 +1,16 @@
-### group by item. Show first 3
+### group by customer. Show first 7
 vespa query "yql=select * from purchase where true | all(
-    group(item)
-    max(3)
+    group(customer)
+    max(7)
     each(
       output(count())
     )
   )"
 
 vespa query "yql=select * from purchase where true limit 0 | all(
-    group(item)
+    group(customer)
     order(-count())
-    max(3)
+    max(7)
     each(
         output(count() as(count_per_item))
     )
@@ -18,7 +18,7 @@ vespa query "yql=select * from purchase where true limit 0 | all(
 
 ### use total $$$ instead of count. But output count as well
 vespa query "yql=select * from purchase where true limit 0 | all(
-    group(item)
+    group(customer)
     order(-sum(price))
     each(
         output(sum(price) as(revenue))
@@ -26,28 +26,17 @@ vespa query "yql=select * from purchase where true limit 0 | all(
     )
   )"
 
-### sales by day
-vespa query "yql=select * from purchase where true limit 0 | all(
-    group(
-      time.date(date)
-    )
-    each(
-        output(sum(price) as(revenue_per_day))
-        output(count())
-    )
-  )" | jq ".root.children[].children[].children[]"
-
-### sales by day, by item
+### sales by day, by customer
 vespa query "yql=select * from purchase where true limit 0 | all(
     group(time.date(date))
     each(
         output(sum(price) as(revenue_per_day))
         output(count())
         all(
-            group(item)
+            group(customer)
             order(-sum(price))
             each(
-                output(sum(price) as(revenue_per_item_per_day))
+                output(sum(price) as(revenue_per_customer_per_day))
                 output(count())
             )
         )
@@ -55,14 +44,14 @@ vespa query "yql=select * from purchase where true limit 0 | all(
   )" | jq ".root.children[].children[].children[]"
 
 
-### top items, but also show 3 sample orders
+### top customers, but also show 7 sample orders
 vespa query "yql=select * from purchase where true limit 0 | all(
-    group(item)
+    group(customer)
     order(-sum(price))
     each(
         output(sum(price) as(revenue))
         output(count())
-        max(3)
+        max(7)
         each(
             output(summary())
         )

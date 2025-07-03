@@ -12,11 +12,11 @@ POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
 {
-    "yql": "select * from product where ({targetHits:100}nearestNeighbor(embedding,q_embedding))",
+    "yql": "select * from product where {targetHits:100}nearestNeighbor(embedding_field,embedding_query_variable)",
     "ranking.profile": "closeness",
     "presentation.summary": "medium",
-    "query_text": "Mini Stencil",
-    "input.query(q_embedding)": "embed(@query_text)"
+    "approximate_query_string": "Mini Stencil",
+    "input.query(embedding_query_variable)": "embed(@approximate_query_string)"
 }
 
 
@@ -25,11 +25,11 @@ POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
 {
-    "yql": "select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(embedding,q_embedding))",
-    "ranking.profile": "rrf",
+    "yql": "select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(embedding_field,embedding_query_variable))",
+    "ranking.profile": "hybrid_search_rank_profile",
     "presentation.summary": "medium",
     "query_text": "Mini Stencil",
-    "input.query(q_embedding)": "embed(@query_text)"
+    "input.query(embedding_query_variable)": "embed(@query_text)"
 }
 
 ### OpenAI command
@@ -39,7 +39,7 @@ Content-Type: application/json
 #     query="what kind of mini stencils do you have for sale?" \
 #     presentation.summary=medium \
 #     hits=5 \
-#     searchChain=openai \
+#     searchChain=openai_search_chain \
 #     format=sse \
 #     traceLevel=1
 
@@ -49,13 +49,13 @@ Content-Type: application/json
 X-LLM-API-KEY: insert-api-key-here
 
 {
-    "yql": "select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(embedding,q_embedding))",
-    "ranking.profile": "rrf",
+    "yql": "select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(embedding_field,embedding_query_variable))",
+    "ranking.profile": "hybrid_search_rank_profile",
     "presentation.summary": "medium",
     "query_text": "Mini Stencil",
-    "input.query(q_embedding)": "embed(@query_text)",
+    "input.query(embedding_query_variable)": "embed(@query_text)",
     "query": "what kind of mini stencils do you have for sale?",
-    "searchChain": "openai",
+    "searchChain": "openai_search_chain",
     "format": "sse",
     "traceLevel": 0
 }
