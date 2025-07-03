@@ -1,10 +1,10 @@
-### group by item. Show first 3
+### group by customer. Show first 7
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
 {
   "yql": "select * from purchase where true | all(
-    group(item)
+    group(customer)
     max(3)
     each(
       output(count())
@@ -19,10 +19,10 @@ Content-Type: application/json
 {
   "yql": "select * from purchase where true | all(
     # group by item
-    group(item)
+    group(customer)
     # order by count descending
     order(-count())
-    max(3)
+    max(7)
     # show the actual count value for each group
     each(
         output(count())
@@ -36,7 +36,7 @@ Content-Type: application/json
 
 {
   "yql": "select * from purchase where true | all(
-    group(item)
+    group(customer)
     order(-sum(price))
     each(
         output(sum(price))
@@ -45,25 +45,7 @@ Content-Type: application/json
   )"
 }
 
-### sales by day
-POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
-Content-Type: application/json
-
-{
-  "yql": "select * from purchase where true | all(
-    group(
-      # this will take the epoch timestamp and create
-      # one bucket per day
-      time.date(date)
-    )
-    each(
-        output(sum(price) as(revenue))
-        output(count())
-    )
-  )"
-}
-
-### sales by day, by item
+### sales by day, by customer
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
@@ -76,13 +58,13 @@ Content-Type: application/json
 
         # within each bucket, take all orders
         all(
-            # group them by item
-            group(item)
+            # group them by customer
+            group(customer)
 
             # order by revenue descending, like we did before
             order(-sum(price))
             each(
-                output(sum(price) as(revenue_per_item_per_day))
+                output(sum(price) as(revenue_per_customer_per_day))
                 output(count())
             )
         )
@@ -90,21 +72,21 @@ Content-Type: application/json
   )"
 }
 
-### most sold items, but also show 3 sample orders
+### frequent customers, but also show 7 sample orders
 # --> limit 0 to not show order list below
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
 {
   "yql": "select * from purchase where true limit 0 | all(
-    # group by item as before
-    group(item)
+    # group by customer as before
+    group(customer)
     order(-count())
     each(
         output(count())
 
         # top 3 orders for each item
-        max(3)
+        max(7)
 
         # show the actual order (i.e. summary)
         each(
@@ -114,13 +96,13 @@ Content-Type: application/json
   )"
 }
 
-### item cardinality (HyperLogLog++) and highest price
+### customer cardinality (HyperLogLog++) and highest price
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
 {
   "yql": "select * from purchase where true | all(
-    group(item)
+    group(customer)
     output(count())
     output(max(price))
   )"
