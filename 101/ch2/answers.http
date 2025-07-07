@@ -1,0 +1,52 @@
+### query for shirt
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where default contains 'shirt'
+}
+
+### query limited in several ways
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select ProductName,Description,Price,PrimaryColor from product where Description contains 'premium cotton' limit 5"
+}
+
+### counts by color
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where true limit 0 | all(group(PrimaryColor) each(output(count())))"
+}
+
+### write a document
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/document/v1/ecommerce/product/docid/42
+Content-Type: application/json
+
+{
+  "fields": {
+    "ProductID": "42",
+    "ProductName": "The answer to everything"
+  }
+}
+
+### get it back
+GET https://<mTLS_ENDPOINT_DNS_GOES_HERE>/document/v1/ecommerce/product/docid/42
+
+### query for it
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search
+Content-Type: application/json
+
+{
+  "yql": "select * from product where ProductName contains \"everything\""
+}
+
+### remove it again
+DELETE https://<mTLS_ENDPOINT_DNS_GOES_HERE>/document/v1/ecommerce/product/docid/42
+
+### get it should fail
+GET https://<mTLS_ENDPOINT_DNS_GOES_HERE>/document/v1/ecommerce/product/docid/42
+
