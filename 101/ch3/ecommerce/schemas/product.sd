@@ -61,7 +61,7 @@ schema product {
     fields: title, description
   }
 
-  rank-profile bm25 {
+  rank-profile use_bm25 {
     # This best matches the 'best_fields' (default) scoring in 'multi_match' ES queries.
     function best_bm25() {
       expression: max(bm25(title), bm25(description))
@@ -71,7 +71,7 @@ schema product {
     }
   }
 
-  rank-profile closeness {
+  rank-profile use_closeness {
     inputs {
       query(q_embedding) tensor<float>(x[384])
     }
@@ -80,7 +80,7 @@ schema product {
     }
   }
 
-  rank-profile hybrid inherits bm25, closeness {
+  rank-profile hybrid inherits use_bm25, use_closeness {
     first-phase {
       # This matches the addition of scores used in ES hybrid queries containing both 'query' ('multi_query') and 'knn'.
       expression: best_bm25 + closeness(field, embedding)
