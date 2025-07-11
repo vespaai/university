@@ -7,7 +7,7 @@ Content-Type: application/json
 {
    "yql": "select * from product where —--->WHERE QUERY CLAUSE GOES HERE <—-----",
    "presentation.summary": "medium",
-   "ranking.profile": "closeness",
+   "ranking.profile": "use_closeness",
    "approximate_query_string": "Face Painting Stencil - QuickEZ/Gears #34",
    "input.query(q_embedding)": [
        0.015, 0.024, 0.046, -0.019, -0.036, -0.023, -0.027, -0.093,

@@ -41,8 +41,8 @@ schema product {
   }
 
   # semantic search rank profile. Refer to it in your query by adding:
-  # "ranking.profile": "closeness"
-  rank-profile closeness {
+  # "ranking.profile": "use_closeness"
+  rank-profile use_closeness {
     inputs {
       query(q_embedding) tensor<float>(x[384])
     }
@@ -54,12 +54,12 @@ schema product {
   # TODO hybrid search rank profile
   # make sure to refer to it in the query
   #
-  # rank-profile rrf inherits closeness {
+  # rank-profile rrf inherits use_closeness {
   #   function best_bm25() {
   #     expression: max(bm25(title), bm25(description))
   #   }
   #   global-phase {
-  #     # TODO: you have a closeness() function inherited and a best_bm25() function defined here
+  #     # TODO: you have a closeness function as seen above and a best_bm25() function defined here
   #     # now define the reciprocal rank fusion expression
   #     rerank-count: 200
   #   }

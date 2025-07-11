@@ -13,7 +13,7 @@ Content-Type: application/json
 
 {
     "yql": "select * from product where {targetHits:100}nearestNeighbor(embedding_field,embedding_query_variable)",
-    "ranking.profile": "closeness",
+    "ranking.profile": "use_closeness",
     "presentation.summary": "medium",
     "approximate_query_string": "Mini Stencil",
     "input.query(embedding_query_variable)": "embed(@approximate_query_string)"
