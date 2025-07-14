@@ -25,8 +25,8 @@ POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
 {
-    "yql": "select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(embedding_field,embedding_query_variable))",
-    "ranking.profile": "hybrid_search_rank_profile",
+    "yql": "select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(EMBEDDING_FIELD,EMBEDDING_QUERY_VARIABLE))",
+    "ranking.profile": "HYBRID_SEARCH_RANK_PROFILE",
     "presentation.summary": "medium",
     "query_text": "Mini Stencil",
     "input.query(embedding_query_variable)": "embed(@query_text)"
@@ -49,8 +49,8 @@ Content-Type: application/json
 X-LLM-API-KEY: insert-api-key-here
 
 {
-    "yql": "select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(embedding_field,embedding_query_variable))",
-    "ranking.profile": "hybrid_search_rank_profile",
+    "yql": "select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(EMBEDDING_FIELD,EMBEDDING_QUERY_VARIABLE))",
+    "ranking.profile": "HYBRID_SEARCH_RANK_PROFILE",
     "presentation.summary": "medium",
     "query_text": "Mini Stencil",
     "input.query(embedding_query_variable)": "embed(@query_text)",
