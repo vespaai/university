@@ -1,4 +1,9 @@
+<!--
+    This file is used to override schema validation rules.
+    You shouldn't need it in this lab, it's just an example.
+    More info at https://docs.vespa.ai/en/reference/validation-overrides.html
+-->
 <validation-overrides>
-    <allow until='2024-12-15'>indexing-change</allow>
-    <allow until='2024-12-15'>schema-removal</allow>
+    <allow until='1970-01-01'>indexing-change</allow>
+    <allow until='1970-01-01'>schema-removal</allow>
 </validation-overrides>

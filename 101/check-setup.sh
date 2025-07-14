@@ -86,4 +86,9 @@ fi
 find $HOME/lab -name '*.http' -print0 |
 	xargs -0 perl -pi -e "s{<mTLS_ENDPOINT_DNS_GOES_HERE>}{$ENDPOINT_DNS}"
 
+# replace 1970-01-01 in all validation-overrides.xml files in the lab directory
+# with the current date + 20 days in YYYY-MM-DD format
+find $HOME/lab -name 'validation-overrides.xml' -print0 |
+	xargs -0 perl -pi -e "s{1970-01-01}{$(date -d '20 days' +%Y-%m-%d)}"
+
 exit 0
