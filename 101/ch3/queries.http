@@ -12,11 +12,11 @@ POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
 {
-    "yql": "select * from product where {targetHits:NUMBER_OF_NEAREST_NEIGHBORS_TO_EXPLORE}nearestNeighbor(embedding_field,embedding_query_variable)",
+    "yql": "select * from product where {targetHits:NUMBER_OF_NEAREST_NEIGHBORS_TO_EXPLORE}nearestNeighbor(EMBEDDING_FIELD,EMBEDDING_QUERY_VARIABLE)",
     # as defined in the schema. We don t want to show the  the embedding
     "presentation.summary": "medium",
     # ranking profile defined in the schema --> points to the fields distance metric
-    "ranking.profile": "use_closeness",
+    "ranking.profile": "CLOSENESS_RANK_PROFILE",
     # just to get an idea of the string that was fed through the same model that generated document embeddings, you can remove this
     "approximate_query_string": "Face Painting Stencil - QuickEZ/Gears #34",
     # the query embedding, where "embedding_query_variable" is an arbitrary string that is used in the schema and in the query here
