@@ -3,14 +3,14 @@
 ## Deploy the application to Vespa
 
 ```
-cd part-purchase
+cd sales_data_app
 vespa deploy
 ```
 
 ## Feeding data
-The data is already converted to JSONL format in [sales-data.jsonl](sales-data.jsonl). So you can just feed it to Vespa:
+The data is already converted to JSONL format in [sales-data.jsonl](dataset/sales-data.jsonl). So you can just feed it to Vespa:
 ```
-vespa feed ../sales-data.jsonl
+vespa feed ../dataset/sales-data.jsonl
 ```
 
 ## Feeding data with Logstash from the CSV file
@@ -23,7 +23,7 @@ You can also feed the data with Logstash from the CSV file. You'll need to [inst
 bin/logstash-plugin install logstash-output-vespa_feed
 ```
 
-2. Change [logstash.conf](logstash.conf) to point to the absolute path of [sales-data.csv](sales-data.csv).
+2. Change [logstash.conf](dataset/logstash.conf) to point to the absolute path of [sales-data.csv](dataset/sales-data.csv).
 
 3. Run Logstash with the modified `logstash.conf`:
 

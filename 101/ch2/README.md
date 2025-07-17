@@ -10,9 +10,9 @@ vespa deploy
 ```
 
 ## Feeding data
-The data is already converted to JSONL format in [products.jsonl](ecommerce/ext/products.jsonl) via the [generate_jsonl.py](ecommerce/ext/generate_jsonl.py) script. So you can just feed it to Vespa:
+The data is already converted to JSONL format in [products.jsonl](dataset/products.jsonl) via the [generate_jsonl.py](dataset/generate_jsonl.py) script. So you can just feed it to Vespa:
 ```
-vespa feed ext/products.jsonl
+vespa feed dataset/products.jsonl
 ```
 
 ## Feeding data with Logstash from the CSV file
@@ -25,7 +25,7 @@ You can also feed the data with Logstash from the CSV file directly. You'll need
 bin/logstash-plugin install logstash-output-vespa_feed
 ```
 
-2. Change [logstash.conf](ecommerce/ext/logstash.conf) to point to the absolute path of [myntra_products_catalog.csv](ecommerce/ext/myntra_products_catalog.csv).
+2. Change [logstash.conf](dataset/logstash.conf) to point to the absolute path of [myntra_products_catalog.csv](dataset/myntra_products_catalog.csv).
 
 3. Run Logstash with the modified `logstash.conf`:
 
