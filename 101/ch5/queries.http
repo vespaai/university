@@ -96,7 +96,7 @@ Content-Type: application/json
   )"
 }
 
-### customer cardinality (HyperLogLog++) and highest price
+### customer cardinality (HyperLogLog++)
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
@@ -104,6 +104,5 @@ Content-Type: application/json
   "yql": "select * from purchase where true | all(
     group(customer)
     output(count())
-    output(max(price))
   )"
 }
