@@ -1,0 +1,25 @@
+### search for shirt
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where ProductName contains 'shirt'"
+}
+
+### search for shirt in both title and description
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where ProductName contains 'shirt' OR Description contains 'shirt'"
+}
+
+
+### add user preferences
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where ProductName contains 'shirt' OR Description contains 'shirt'",
+  "ranking.features.query(user_preferences)": "{{features:GenderWomen}:1,{features:GenderUnisex}:0.7,{features:PriceFactor}:3}"
+}
