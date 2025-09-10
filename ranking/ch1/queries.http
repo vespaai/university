@@ -1,4 +1,12 @@
-### search for shirt
+### search for shirt, default rank profile
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where ProductName contains 'shirt'"
+}
+
+### search for shirt, custom rank profile
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
