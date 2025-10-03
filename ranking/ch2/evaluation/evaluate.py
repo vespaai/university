@@ -8,9 +8,9 @@ import csv
 
 #RANKING_PROFILE = "closeness_productname_description"
 RANKING_PROFILE = "default"
-vespa_app = Vespa(url="<mTLS_ENDPOINT_DNS_GOES_HERE>",
-    cert='/Users/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-public-cert.pem',
-    key='/Users/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-private-key.pem')
+vespa_app = Vespa(url="https://<mTLS_ENDPOINT_DNS_GOES_HERE>",
+    cert='/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-public-cert.pem',
+    key='/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-private-key.pem')
 
 
 # Load queries from CSV file

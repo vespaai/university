@@ -11,13 +11,13 @@ from openai import OpenAI
 import traceback
 
 # Configuration parameters
-# VESPA_ENDPOINT = "<mTLS_ENDPOINT_DNS_GOES_HERE>"
+VESPA_ENDPOINT = "https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/"
 #RANKING_PROFILE = "nativeRankBM25" # fill in the ranking profile you want to use
 RANKING_PROFILE = "closeness_productname_description"
 HITS = 100 # number of documents to return from Vespa and evaluate. You can't go too far because of speed and LLM context limits.
-# OPENAI_API_KEY = "<YOUR_OPENAI_API_KEY>"
-# MTLS_CERT_PATH = "/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-public-cert.pem"
-# MTLS_KEY_PATH = "/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.ranking.default/data-plane-private-key.pem"
+OPENAI_API_KEY = "<YOUR_OPENAI_API_KEY>"
+MTLS_CERT_PATH = "/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-public-cert.pem"
+MTLS_KEY_PATH = "/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.ranking.default/data-plane-private-key.pem"
 
 # Input/output files
 QUERIES_FILE = "queries.csv"
