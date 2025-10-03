@@ -1,0 +1,21 @@
+### lexical search
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where userQuery()",
+  "query": "home decor items",
+  "ranking.profile": "nativeRankBM25",
+  "hits": 100
+}
+
+### ANN
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+    "yql": "select * from product where ({targetHits:100}nearestNeighbor(ProductName_embedding,q_embedding)) OR ({targetHits:100}nearestNeighbor(Description_embedding,q_embedding))",
+    "ranking.profile": "closeness_productname_description",
+    "approximate_query_string": "Mini Stencil",
+    "input.query(q_embedding)": "embed(@approximate_query_string)"
+}
