@@ -16,6 +16,6 @@ Content-Type: application/json
 {
     "yql": "select * from product where ({targetHits:100}nearestNeighbor(ProductName_embedding,q_embedding)) OR ({targetHits:100}nearestNeighbor(Description_embedding,q_embedding))",
     "ranking.profile": "closeness_productname_description",
-    "approximate_query_string": "Mini Stencil",
+    "approximate_query_string": "blue t-shirt",
     "input.query(q_embedding)": "embed(@approximate_query_string)"
 }
