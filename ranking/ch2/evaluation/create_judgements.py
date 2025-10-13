@@ -9,19 +9,21 @@ import requests
 import os
 from openai import OpenAI
 import traceback
+import evaluate
 
 # Configuration parameters
 VESPA_ENDPOINT = "https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/"
-#RANKING_PROFILE = "nativeRankBM25" # fill in the ranking profile you want to use
-RANKING_PROFILE = "closeness_productname_description"
 HITS = 100 # number of documents to return from Vespa and evaluate. You can't go too far because of speed and LLM context limits.
 OPENAI_API_KEY = "<YOUR_OPENAI_API_KEY>"
 MTLS_CERT_PATH = "/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-public-cert.pem"
-MTLS_KEY_PATH = "/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.ranking.default/data-plane-private-key.pem"
+MTLS_KEY_PATH = "/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-private-key.pem"
 
 # Input/output files
 QUERIES_FILE = "queries.csv"
 JUDGEMENTS_FILE = "judgements.csv"
+
+# Query to use from evaluate.py
+QUERY_FUNCTION = evaluate.vector_search
 
 def load_queries():
     """Load queries from CSV file."""
@@ -65,12 +67,7 @@ def execute_vespa_query(query_text):
         'Content-Type': 'application/json'
     }
 
-    payload = {
-        "yql": "select ProductID,ProductName,ProductBrand,Gender,Price,Description,PrimaryColor,AverageRating from product where userQuery()",
-        "query": query_text,
-        "ranking.profile": RANKING_PROFILE,
-        "hits": HITS
-    }
+    payload = QUERY_FUNCTION(query_text, HITS)
 
     # Configure mTLS if certificates are provided
     cert = None
@@ -279,4 +276,7 @@ def main():
     print("Processing complete!")
 
 if __name__ == "__main__":
+    if OPENAI_API_KEY == "<YOUR_OPENAI_API_KEY>":
+        print("ERROR: Please set the OPENAI_API_KEY environment variable in the script. Ask your instructor if you don't have one.")
+        exit(1)
     main()

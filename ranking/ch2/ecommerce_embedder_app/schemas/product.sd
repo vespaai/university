@@ -60,10 +60,20 @@ schema product {
 
     field ProductName_embedding type tensor<float>(x[384]) {
         indexing: input ProductName | embed arctic | attribute | index
+        attribute {
+            # arctic model is trained on cosine similarity
+            # but produces normalized embeddings (use normalize=true in the services.xml definition)
+            # so we can use dot product as the distance metric (prenormalized-angular)
+            distance-metric: prenormalized-angular
+        }
     }
 
     field Description_embedding type tensor<float>(x[384]) {
         indexing: input Description | embed arctic | attribute | index
+        attribute {
+            # same prenormalized-angular distance metric as above
+            distance-metric: prenormalized-angular
+        }
     }
 
    # this could be a list of fields that is searched together
