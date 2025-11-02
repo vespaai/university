@@ -1,29 +1,83 @@
 # NOTE: this is a PoC. The prompt can be improved, e.g. with some examples.
 # More details at https://blog.vespa.ai/improving-retrieval-with-llm-as-a-judge/
 
-# NOTE: make sure you do `source prepare_env.sh` before running this script
+# MULTI_RETREIVAL SUPPORT:
+# This script supports combining multiple query functions (e.g., vector + lexical search).
+# Configure QUERY_FUNCTIONS below to use single or multiple search strategies.
+# Results are automatically concatenated and deduplicated by document ID.
 
 import csv
 import json
 import requests
 import os
+from pathlib import Path
 from openai import OpenAI
 import traceback
 import evaluate
 
-# Configuration parameters
-VESPA_ENDPOINT = "https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/"
-HITS = 100 # number of documents to return from Vespa and evaluate. You can't go too far because of speed and LLM context limits.
-OPENAI_API_KEY = "<YOUR_OPENAI_API_KEY>"
-MTLS_CERT_PATH = "/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-public-cert.pem"
-MTLS_KEY_PATH = "/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-private-key.pem"
+# Try to load .env file if it exists
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    print("Note: python-dotenv not installed. Install with 'pip install python-dotenv' to use .env files.")
 
-# Input/output files
-QUERIES_FILE = "queries.csv"
-JUDGEMENTS_FILE = "judgements.csv"
+########################################################
+######## CONFIGURATION BEGIN ############################
+########################################################
 
-# Query to use from evaluate.py
-QUERY_FUNCTION = evaluate.vector_search
+# Configuration from environment variables with fallback defaults
+VESPA_ENDPOINT = os.getenv('VESPA_ENDPOINT', 'http://localhost:8080')
+# Ensure endpoint has /search/ suffix
+if not VESPA_ENDPOINT.endswith('/search/'):
+    VESPA_ENDPOINT = VESPA_ENDPOINT.rstrip('/') + '/search/'
+
+VESPA_CERT_PATH = os.getenv('VESPA_CERT_PATH', '')
+VESPA_KEY_PATH = os.getenv('VESPA_KEY_PATH', '')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
+
+# Optional configuration
+HITS = int(os.getenv('HITS', '100'))  # number of documents to return from Vespa and evaluate
+QUERIES_FILE = os.getenv('QUERIES_FILE', 'queries.csv')
+JUDGEMENTS_FILE = os.getenv('JUDGEMENTS_FILE', 'judgements.csv')
+
+# Validate certificate paths
+MTLS_CERT_PATH = None
+MTLS_KEY_PATH = None
+
+if VESPA_CERT_PATH and VESPA_KEY_PATH:
+    cert_path = Path(VESPA_CERT_PATH)
+    key_path = Path(VESPA_KEY_PATH)
+    
+    if cert_path.exists() and key_path.exists():
+        MTLS_CERT_PATH = str(cert_path)
+        MTLS_KEY_PATH = str(key_path)
+        print(f"Using mTLS with cert: {cert_path}")
+    else:
+        print(f"Warning: Certificate or key file not found. Connecting without mTLS.")
+        if not cert_path.exists():
+            print(f"  Cert not found: {cert_path}")
+        if not key_path.exists():
+            print(f"  Key not found: {key_path}")
+else:
+    print(f"Connecting to Vespa without mTLS (no cert/key configured)")
+
+print(f"Vespa endpoint: {VESPA_ENDPOINT}")
+print(f"Will request {HITS} hits per query function")
+
+# Query functions to use from evaluate.py
+# Use an array to combine multiple search strategies and 
+# Results will be concatenated and deduplicated by document ID get multiple perspectives
+QUERY_FUNCTIONS = [evaluate.vector_search, evaluate.lexical_search]
+# QUERY_FUNCTIONS = [evaluate.vector_search]  # Single function
+# QUERY_FUNCTIONS = [evaluate.lexical_search]  # Single function
+
+print(f"Using {len(QUERY_FUNCTIONS)} query function(s): {[f.__name__ for f in QUERY_FUNCTIONS]}")
+print(f"Max documents to evaluate per query: {HITS * len(QUERY_FUNCTIONS)} (before deduplication)")
+
+########################################################
+######## CONFIGURATION END ##############################
+########################################################
 
 def load_queries():
     """Load queries from CSV file."""
@@ -62,22 +116,56 @@ def load_existing_judgements():
     return {(row['query_id'], row['document_id']) for row in existing_rows}
 
 def execute_vespa_query(query_text):
-    """Execute a query against Vespa and return results."""
+    """Execute multiple queries against Vespa, concatenate and deduplicate results."""
     headers = {
         'Content-Type': 'application/json'
     }
-
-    payload = QUERY_FUNCTION(query_text, HITS)
 
     # Configure mTLS if certificates are provided
     cert = None
     if MTLS_CERT_PATH and MTLS_KEY_PATH:
         cert = (MTLS_CERT_PATH, MTLS_KEY_PATH)
 
-    response = requests.post(VESPA_ENDPOINT, headers=headers, json=payload, cert=cert)
-    response.raise_for_status()
+    all_documents = []
+    seen_doc_ids = set()
+    total_before_dedup = 0
 
-    return response.json()
+    # Execute each query function
+    for query_func in QUERY_FUNCTIONS:
+        payload = query_func(query_text, HITS)
+        
+        response = requests.post(VESPA_ENDPOINT, headers=headers, json=payload, cert=cert)
+        response.raise_for_status()
+        
+        result = response.json()
+        documents = result.get('root', {}).get('children', [])
+        total_before_dedup += len(documents)
+        
+        # Add documents, deduplicating by ProductID
+        added_count = 0
+        for doc in documents:
+            fields = doc.get('fields', {})
+            doc_id = fields.get('ProductID')
+            
+            if doc_id and doc_id not in seen_doc_ids:
+                seen_doc_ids.add(doc_id)
+                all_documents.append(doc)
+                added_count += 1
+        
+        duplicate_count = len(documents) - added_count
+        if len(QUERY_FUNCTIONS) > 1:
+            print(f"  {query_func.__name__}: {len(documents)} documents ({added_count} new, {duplicate_count} duplicates)")
+    
+    # Show deduplication summary
+    if len(QUERY_FUNCTIONS) > 1:
+        print(f"  Combined: {len(all_documents)} unique documents (from {total_before_dedup} total)")
+    
+    # Return in the same format as original response
+    return {
+        'root': {
+            'children': all_documents
+        }
+    }
 
 def get_openai_judgements(query_text, documents):
     """Get relevance judgements from OpenAI for query-document pairs using micro-batches."""
@@ -276,7 +364,11 @@ def main():
     print("Processing complete!")
 
 if __name__ == "__main__":
-    if OPENAI_API_KEY == "<YOUR_OPENAI_API_KEY>":
-        print("ERROR: Please set the OPENAI_API_KEY environment variable in the script. Ask your instructor if you don't have one.")
+    if not OPENAI_API_KEY:
+        print("ERROR: OPENAI_API_KEY is required but not set.")
+        print("Please set it via:")
+        print("  1. Environment variable: export OPENAI_API_KEY='your-key'")
+        print("  2. .env file: OPENAI_API_KEY=your-key")
+        print("\nAsk your instructor if you don't have an OpenAI API key.")
         exit(1)
     main()

@@ -36,11 +36,12 @@ endpoint=${ready#Container * at }
 ephost=${endpoint#https://}
 ENDPOINT_DNS=${ephost%/}
 
-find . -name '*.py' -print0 |
-        xargs -0 perl -pi -e "s{<mTLS_ENDPOINT_DNS_GOES_HERE>}{$ENDPOINT_DNS}"
+# create a .env file from env.example
+cp env.example .env
 
-find . -name '*.py' -print0 |
-        xargs -0 perl -pi -e "s{<YOUR_TENANT>.<YOUR_APPLICATION>.default}{$app}"
+# replace the placeholders in the .env file
+sed -i "s|<mTLS_ENDPOINT_DNS_GOES_HERE>|$ENDPOINT_DNS|" .env
+sed -i "s|<YOUR_TENANT>.<YOUR_APPLICATION>.default>|$app|" .env
 
 echo "done"
 

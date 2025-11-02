@@ -49,3 +49,453 @@ query_id,query_text
 48,trendy shoes
 49,stylish bag
 50,home essentials
+51,striped shirt men
+52,ankle jeans for women
+53,cotton pajamas men
+54,party dress women
+55,sports watch
+56,leather jacket men
+57,kurta pajama men
+58,casual dress
+59,formal trousers men
+60,ethnic saree
+61,printed shirt men
+62,skinny jeans women
+63,trackpants men
+64,cocktail dress
+65,dress shirt men
+66,floral dress women
+67,cargo pants men
+68,ethnic wear men
+69,office wear women
+70,loungewear women
+71,polo tshirt men
+72,high heel sandals
+73,formal blazer men
+74,baby clothing
+75,kids dress
+76,bohemian dress
+77,denim skirt
+78,checked shirt men
+79,ethnic palazzo
+80,home decor lamps
+81,designer saree
+82,casual sneakers women
+83,trucker jacket
+84,home furnishings
+85,designer perfume women
+86,occasion wear women
+87,slim fit shirt men
+88,ethnic blouse
+89,kid shorts
+90,workout tshirt
+91,embroidered kurta
+92,laptop bag
+93,travel luggage
+94,designer handbag women
+95,kids shoes
+96,cotton dress women
+97,branded jeans
+98,cocktail saree
+99,baby dress
+100,college backpack
+101,gym shorts men
+102,casual shirt women
+103,ethnic lehenga
+104,winter boots
+105,beach dress
+106,formal shirt women
+107,everyday bra
+108,ethnic churidar
+109,sports bra
+110,designer kurti
+111,half sleeve shirt
+112,ethnic salwar suit
+113,fitness apparel
+114,pickup shoes men
+115,casual pant women
+116,sports jersey
+117,hoodie men
+118,ethnic dupatta
+119,laptop messenger bag
+120,woven kurta men
+121,kid jeans
+122,designer suit
+123,ethnic mojri
+124,baby onesie
+125,ethnic bandhgala
+126,school bag kids
+127,cotton casual dress
+128,formal footwear men
+129,ethnic bridal wear
+130,home cushion covers
+131,baby frock
+132,lounger shirt men
+133,dog training accessories
+134,ethnic sherwani
+135,women underwear
+136,kid ethnic wear
+137,home kitchen storage
+138,designer bag women
+139,ethnic dhoti
+140,casual wear men
+141,pickup sneakers
+142,home placemats
+143,ethnic embroidered kurta
+144,fitness tights
+145,baby romper
+146,kid tshirt
+147,ethnic gooti
+148,women lingerie
+149,home bedsheet king
+150,baby clothing set
+151,branded perfume men
+152,formal vest men
+153,ethnic overcoat
+154,lounger tshirt men
+155,sports jacket
+156,ethnic chunnari
+157,women sports wear
+158,kid shoes sports
+159,home handpainted decor
+160,baby casual wear
+161,designer sunglasses
+162,ethnic phulkari
+163,casual sandals men
+164,women formal suit
+165,ethnic patiala salwar
+166,baby gift set
+167,home dinner set
+168,ethnic armlet
+169,pickup flip flops
+170,kid formal wear
+171,home decorative bowls
+172,ethnic waist belt
+173,designer watch
+174,baby formal dress
+175,ethnic choli
+176,sports tracksuit
+177,women yoga wear
+178,kid designer wear
+179,home geometric decor
+180,baby party wear
+181,designer cufflinks
+182,ethnic waistcoat
+183,casual jacket men
+184,women branded cosmetics
+185,ethnic dhoti pant
+186,baby winter wear
+187,home ceramic accessories
+188,ethnic neck piece
+189,pickup sports shoes
+190,kid ethnic set
+191,home multicolored decor
+192,ethnic potli bag
+193,designer aviator sunglasses
+194,baby casual shoes
+195,ethnic topi
+196,lounger shorts men
+197,women branded bag
+198,ethnic churidar men
+199,kid winter jacket
+200,home soft furnishings
+201,designer clutch
+202,ethnic bangles
+203,pickup outdoor shoes
+204,baby diaper bag
+205,ethnic kurta set women
+206,women branded sandals
+207,ethnic jutti
+208,kid branded shoes
+209,home geometric placemats
+210,baby branded clothes
+211,designer tote bag
+212,ethnic lehenga choli
+213,casual footwear women
+214,women branded perfume
+215,ethnic kalidar
+216,baby branded shoes
+217,home floral decor
+218,ethnic stone jewelry
+219,pickup hiking shoes
+220,kid branded tshirt
+221,ethnic embroidered suit
+222,baby branded dress
+223,home cotton textiles
+224,ethnic ladoo
+225,designer crossbody bag
+226,women branded watch
+227,ethnic ghagra
+228,kid branded jeans
+229,home storage jars
+230,baby branded onesie
+231,ethnic stone work
+232,pickup waterproof shoes
+233,women branded scarf
+234,ethnic suede
+235,baby branded frock
+236,home decorative trays
+237,designer backpack women
+238,ethnic resin jewelry
+239,kid branded shorts
+240,ethnic kali pyjama
+241,baby branded romper
+242,home melamine dinnerware
+243,designer roller bag
+244,ethnic ornamental jewelry
+245,pickup basketball shoes
+246,women branded cardigan
+247,ethnic paisley print
+248,kid branded dress
+249,baby branded gift set
+250,home printed cushions
+251,designer sling bag
+252,ethnic sequin work
+253,women branded blazer
+254,ethnic border work
+255,baby branded winter wear
+256,home handpainted accessories
+257,ethnic bandhgala men
+258,pickup tennis shoes
+259,kid branded trackpants
+260,women branded kimono
+261,ethnic antique finish
+262,baby branded casual wear
+263,home decorative vases
+264,designer camera bag
+265,ethnic beading work
+266,women branded jumpsuit
+267,ethnic mirror work
+268,kid branded jacket
+269,baby branded frock set
+270,home kitchen accessories
+271,designer messenger bag
+272,ethnic zardozi work
+273,pickup running shoes
+274,women branded culottes
+275,ethnic gold work
+276,baby branded party wear
+277,home living accessories
+278,ethnic silver jewelry
+279,kid branded hoodie
+280,designer weekend bag
+281,ethnic lucky bag
+282,women branded flats
+283,ethnic handmade jewelry
+284,baby branded formal wear
+285,home decorative mirrors
+286,designer travel organizer
+287,ethnic bead work
+288,kid branded leggings
+289,ethnic traditional jewelry
+290,baby branded swimwear
+291,home wall decor
+292,designer vanity bag
+293,ethnic oxidized jewelry
+294,women branded slippers
+295,ethnic craft jewelry
+296,kid branded dress set
+297,baby branded superhero costume
+298,home room dividers
+299,designer trunk bag
+300,ethnic hand embroidery
+301,women branded mules
+302,ethnic jewelry box
+303,kid branded uniform
+304,baby branded character wear
+305,home decorative candles
+306,designer wine bag
+307,ethnic danka work
+308,women branded loafers
+309,ethnic antique jewelry
+310,kid branded school bag
+311,baby branded bath towel
+312,home bathroom accessories
+313,designer toiletry bag
+314,ethnic gotta patti
+315,pickup football shoes
+316,women branded heels
+317,ethnic gota patti
+318,kid branded sports wear
+319,baby branded swimsuit
+320,home bath linen
+321,designer cosmetic bag
+322,ethnic dabka work
+323,women branded booties
+324,ethnic jhaalar work
+325,kid branded superhero costume
+326,baby branded sun hat
+327,home bath rug
+328,designer umbrella
+329,ethnic pearl jewelry
+330,pickup cross training shoes
+331,women branded pumps
+332,ethnic meenakari jewelry
+333,kid branded ballerina costume
+334,baby branded bib sets
+335,home towel sets
+336,designer jewelry box
+337,ethnic precious stones
+338,women branded clogs
+339,ethnic gemstone jewelry
+340,kid branded princess dress
+341,baby branded feeding set
+342,home table runner
+343,designer sunglasses case
+344,ethnic polki jewelry
+345,women branded ballet flats
+346,ethnic kundan jewelry
+347,kid branded peter pan collar dress
+348,baby branded onesie set
+349,home napkin holders
+350,designer keychain
+351,ethnic jadau jewelry
+352,pickup skateboarding shoes
+353,women branded peep toe heels
+354,ethnic moti jewelry
+355,kid branded tutu dress
+356,baby branded burp cloth
+357,home table lamps
+358,designer leather wallet
+359,ethnic polka jewelry
+360,women branded wedge heels
+361,ethnic tera work
+362,kid branded tiara
+363,baby branded receiving blanket
+364,home floor lamps
+365,designer coin purse
+366,ethnic chandi jewelry
+367,pickup crossfit shoes
+368,women branded platform heels
+369,ethnic silver jewelry box
+370,kid branded crown
+371,baby branded swaddle
+372,home desk lamps
+373,designer card holder
+374,ethnic gold jewelry box
+375,women branded stiletto heels
+376,ethnic brass jewelry
+377,kid branded magic wand
+378,baby branded changing mat
+379,home pendant lights
+380,designer leather belt
+381,ethnic rose gold jewelry
+382,pickup weightlifting shoes
+383,women branded kitten heels
+384,ethnic copper jewelry
+385,kid branded fairy wings
+386,baby branded diaper pants
+387,home chandeliers
+388,designer stud bracelet
+389,ethnic white gold jewelry
+390,women branded espadrilles
+391,ethnic enamel jewelry
+392,kid branded superhero cape
+393,baby branded feeding pillow
+394,home ceiling lights
+395,designer charm bracelet
+396,ethnic sterling silver
+397,pickup boxing shoes
+398,women branded mary janes
+399,ethnic filigree work
+400,kid branded pirate costume
+401,baby branded nursing pillow
+402,home wall sconces
+403,designer anklet
+404,ethnic temple jewelry
+405,women branded oxfords
+406,ethnic antique finish jewelry
+407,kid branded astronaut costume
+408,baby branded teether set
+409,home recessed lights
+410,designer nose pin
+411,ethnic waist chain
+412,pickup wrestling shoes
+413,women branded derby shoes
+414,ethnic toe ring
+415,kid branded fireman costume
+416,baby branded bouncer seat
+417,home fairy lights
+418,designer haath phool
+419,ethnic nath
+420,women branded loafers casual
+421,ethnic ear tops
+422,kid branded chef costume
+423,baby branded play gym
+424,home LED strips
+425,designer bracelet watch
+426,ethnic choker set
+427,pickup bodybuilding shoes
+428,women branded gladiator sandals
+429,ethnic kamarbandh
+430,kid branded scientist costume
+431,baby branded cradle
+432,home accent lights
+433,designer cuff bracelet
+434,ethnic tamba jewelry
+435,women branded gladiator heels
+436,ethnic nathni
+437,kid branded astronaut helmet
+438,baby branded rocking chair
+439,home track lighting
+440,designer tennis bracelet
+441,ethnic hathphool
+442,pickup climbing shoes
+443,women branded jelly sandals
+444,ethnic payal
+445,kid branded space shuttle costume
+446,baby branded baby car seat
+447,home street lighting
+448,designer cocktail ring
+449,ethnic mina work
+450,women branded jelly heels
+451,ethnic bajuband
+452,kid branded rocket costume
+453,baby branded stroller
+454,home garden lights
+455,designer engagement ring
+456,ethnic hathpanjas
+457,pickup track spikes
+458,women branded slip on sneakers
+459,ethnic necklace set
+460,kid branded rocket backpack
+461,baby branded diaper bag
+462,home security lights
+463,designer eternity ring
+464,ethnic mang tika
+465,women branded slip on pumps
+466,ethnic hathpanja
+467,kid branded rocket toys
+468,baby branded diaper covers
+469,home accent table lights
+470,designer wedding ring
+471,ethnic jhumar
+472,pickup turf shoes
+473,women branded slip on mules
+474,ethnic earrings set
+475,kid branded rocket pyjamas
+476,baby branded diaper stacker
+477,home tabletop lights
+478,designer anniversary ring
+479,ethnic mathapatti
+480,women branded slip on flats
+481,ethnic hair accessories
+482,kid branded rocket sheets
+483,baby branded diaper disposal system
+484,home hanging lights
+485,designer precious metal jewelry
+486,ethnic hathphool complete
+487,pickup track racing flats
+488,women branded slip on loafers
+489,ethnic jewelry wear
+490,kid branded rocket lamp
+491,baby branded diaper zipper
+492,home pendant lighting
+493,designer gold chain
+494,ethnic traditional wear complete
+495,women branded slip on oxfords
+496,ethnic bridal jewelry set
+497,kid branded rocket themed room
+498,baby branded baby bath tub
+499,home atmospheric lights
+500,designer diamond jewelry
