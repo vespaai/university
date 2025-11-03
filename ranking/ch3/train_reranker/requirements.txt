@@ -8,3 +8,4 @@ lightgbm
 plotly
 nbformat
 scikit-learn
+ipynbname

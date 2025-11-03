@@ -21,7 +21,7 @@ rank-profile hybrid {
         expression: closeness(field, Description_embedding)
     }
 
-    ## document attributes (needed for reranking)
+    ## document attributes (needed for reranking and model training)
     function AverageRating() {
         expression: attribute(AverageRating)
     }
@@ -29,7 +29,7 @@ rank-profile hybrid {
         expression: attribute(Price)
     }
 
-    ## show the scoring components in search results
+    ## show the scoring components in search results (needed for reranking and model training)
     summary-features: native_rank_name native_rank_description closeness_productname closeness_description
 
     ## basic hybrid ranking
