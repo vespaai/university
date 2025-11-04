@@ -53,3 +53,15 @@ echo "Creating virtual environment and installing requirements..."
 python3 -m venv reranker_venv
 source reranker_venv/bin/activate
 pip install -r requirements.txt
+
+echo "Adding Jupyter + IPyKernel to the venv ..."
+pip install jupyter ipykernel
+
+echo "Register this venv as a Jupyter kernel so code-server can pick it"
+python -m ipykernel install --user \
+  --name "reranker_venv" \
+  --display-name "Python (reranker_venv)"
+
+echo "Installing code-server extensions for Jupyter..."
+code-server --install-extension ms-toolsai.jupyter
+code-server --install-extension ms-python.python
