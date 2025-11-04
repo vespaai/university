@@ -1,4 +1,7 @@
-echo -n "Replacing Vespa endpoint and certificate paths in Python files..."
+echo "Installing libgomp1, needed for LightGBM..."
+sudo apt-get install -y libgomp1
+
+echo -n "Creating .env file with Vespa endpoint and certificate paths..."
 
 app=$(vespa config get application -c never 2>&1)
 if [ "$app" = "application = <unset>" ]; then
@@ -36,10 +39,12 @@ endpoint=${ready#Container * at }
 ephost=${endpoint#https://}
 ENDPOINT_DNS=${ephost%/}
 
+# create a .env file from env.example
+cp env.example .env
 
 # replace the placeholders in the .env file
 sed -i "s|<mTLS_ENDPOINT_DNS_GOES_HERE>|$ENDPOINT_DNS|" .env
-sed -i "s|<YOUR_TENANT>.<YOUR_APPLICATION>.default>|$app|" .env
+sed -i "s|<YOUR_TENANT>.<YOUR_APPLICATION>.default|$app|" .env
 
 echo "done"
 

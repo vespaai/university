@@ -130,6 +130,9 @@ if __name__ == "__main__":
         sample_docs = dict(list(docs.items())[:3])
         print(f'  Sample: {sample_docs}')
 
+    print("================================================")
+    print(f"Evaluating {len(relevant_docs)} queries using query function: {QUERY_FUNCTION.__name__}")
+    print("================================================")
     evaluator = VespaEvaluator(
         # list of queries (ID, query text)
         queries=queries,

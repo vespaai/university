@@ -1,4 +1,4 @@
-echo -n "Replacing Vespa endpoint and certificate paths in Python files..."
+echo -n "Creating .env file with Vespa endpoint and certificate paths..."
 
 app=$(vespa config get application -c never 2>&1)
 if [ "$app" = "application = <unset>" ]; then
@@ -41,7 +41,7 @@ cp env.example .env
 
 # replace the placeholders in the .env file
 sed -i "s|<mTLS_ENDPOINT_DNS_GOES_HERE>|$ENDPOINT_DNS|" .env
-sed -i "s|<YOUR_TENANT>.<YOUR_APPLICATION>.default>|$app|" .env
+sed -i "s|<YOUR_TENANT>.<YOUR_APPLICATION>.default|$app|" .env
 
 echo "done"
 
