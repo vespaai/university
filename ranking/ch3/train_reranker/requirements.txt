@@ -1,0 +1,11 @@
+requests
+openai
+pyvespa
+python-dotenv
+numpy
+pandas
+lightgbm
+plotly
+nbformat
+scikit-learn
+ipynbname

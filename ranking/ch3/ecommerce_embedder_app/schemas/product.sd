@@ -1,0 +1,84 @@
+schema product {
+   document product {
+       # this ProductID is redundant, but we'll keep it for now
+       field ProductID type string {
+           indexing: summary
+       }
+
+
+       # full-text search => index
+       field ProductName type string {
+           indexing: summary | index
+       }
+
+
+       # we might want to filter or group by brand => attribute
+       field ProductBrand type string {
+           indexing: summary | attribute
+       }
+
+
+       # for filtering&grouping => attribute
+       field Gender type string {
+           indexing: summary | attribute
+       }
+
+
+       # same here, though groups might be price ranges
+       field Price type int {
+           indexing: summary | attribute
+       }
+
+
+       # less likely to group by number of images, but just in case
+       field NumImages type int {
+           indexing: summary | attribute
+       }
+
+
+       # full-text search => index
+       field Description type string {
+           indexing: summary | index
+       }
+
+
+       # filter&facet
+       field PrimaryColor type string {
+           indexing: summary | attribute
+       }
+
+       # use in ranking
+       field AverageRating type string {
+          indexing: summary | attribute
+       }
+
+       # also for ranking
+       field ProductFeatures type tensor<float>(features{}) {
+           indexing: summary | attribute
+       }
+   }
+
+    field ProductName_embedding type tensor<float>(x[384]) {
+        indexing: input ProductName | embed arctic | attribute | index
+        attribute {
+            # arctic model is trained on cosine similarity
+            # but produces normalized embeddings (use normalize=true in the services.xml definition)
+            # so we can use dot product as the distance metric (prenormalized-angular)
+            distance-metric: prenormalized-angular
+        }
+    }
+
+    field Description_embedding type tensor<float>(x[384]) {
+        indexing: input Description | embed arctic | attribute | index
+        attribute {
+            # same prenormalized-angular distance metric as above
+            distance-metric: prenormalized-angular
+        }
+    }
+
+   # this could be a list of fields that is searched together
+   fieldset default {
+       fields: ProductName, Description
+   }
+
+}

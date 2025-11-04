@@ -1,3 +1,7 @@
+echo "Installing libgomp1, needed for LightGBM..."
+sudo apt-get install -y libgomp1
+
+echo "================================================"
 echo -n "Creating .env file with Vespa endpoint and certificate paths..."
 
 app=$(vespa config get application -c never 2>&1)
@@ -44,9 +48,30 @@ sed -i "s|<mTLS_ENDPOINT_DNS_GOES_HERE>|$ENDPOINT_DNS|" .env
 sed -i "s|<YOUR_TENANT>.<YOUR_APPLICATION>.default|$app|" .env
 
 echo "done"
+echo "================================================"
 
 echo
+echo "================================================"
 echo "Creating virtual environment and installing requirements..."
-python3 -m venv judgements_venv
-source judgements_venv/bin/activate
+echo "================================================"
+python3 -m venv reranker_venv
+source reranker_venv/bin/activate
 pip install -r requirements.txt
+
+echo "================================================"
+echo "Adding Jupyter + IPyKernel to the venv ..."
+echo "================================================"
+pip install jupyter ipykernel
+
+echo "================================================"
+echo "Register this venv as a Jupyter kernel so code-server can pick it"
+echo "================================================"
+python -m ipykernel install --user \
+  --name "reranker_venv" \
+  --display-name "Python (reranker_venv)"
+
+echo "================================================"
+echo "Installing code-server extensions for Jupyter..."
+echo "================================================"
+code-server --install-extension ms-toolsai.jupyter
+code-server --install-extension ms-python.python

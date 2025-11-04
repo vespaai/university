@@ -1,18 +1,51 @@
 from vespa.application import Vespa
 from vespa.evaluation import VespaEvaluator
 import csv
+import os
+from pathlib import Path
 
-# NOTE: make sure you do `source prepare_env.sh` before running this script
+# Try to load .env file if it exists
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    print("Note: python-dotenv not installed. Install with 'pip install python-dotenv' to use .env files.")
 
 ########################################################
 ######## CONFIGURATION BEGIN ############################
 ########################################################
 
-vespa_app = Vespa(url="https://<mTLS_ENDPOINT_DNS_GOES_HERE>",
-    cert='/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-public-cert.pem',
-    key='/home/student/.vespa/<YOUR_TENANT>.<YOUR_APPLICATION>.default/data-plane-private-key.pem')
+# Configuration from environment variables with fallback defaults
+VESPA_ENDPOINT = os.getenv('VESPA_ENDPOINT', 'http://localhost:8080')
+VESPA_CERT_PATH = os.getenv('VESPA_CERT_PATH', '')
+VESPA_KEY_PATH = os.getenv('VESPA_KEY_PATH', '')
 
-FIELDS_TO_RETURN = 'ProductID,ProductName,ProductBrand,Gender,Price,Description,PrimaryColor,AverageRating'
+# Build Vespa connection parameters
+vespa_kwargs = {'url': VESPA_ENDPOINT}
+
+# Only add cert/key if both are provided and files exist
+if VESPA_CERT_PATH and VESPA_KEY_PATH:
+    cert_path = Path(VESPA_CERT_PATH)
+    key_path = Path(VESPA_KEY_PATH)
+    
+    if cert_path.exists() and key_path.exists():
+        vespa_kwargs['cert'] = str(cert_path)
+        vespa_kwargs['key'] = str(key_path)
+        print(f"Using mTLS with cert: {cert_path}")
+    else:
+        print(f"Warning: Certificate or key file not found. Connecting without mTLS.")
+        if not cert_path.exists():
+            print(f"  Cert not found: {cert_path}")
+        if not key_path.exists():
+            print(f"  Key not found: {key_path}")
+else:
+    print(f"Connecting to Vespa without mTLS (no cert/key configured)")
+
+print(f"Vespa endpoint: {VESPA_ENDPOINT}")
+
+vespa_app = Vespa(**vespa_kwargs)
+
+FIELDS_TO_RETURN = os.getenv('FIELDS_TO_RETURN', 'ProductID,ProductName,ProductBrand,Gender,Price,Description,PrimaryColor,AverageRating')
 
 def vector_search(query_text: str, top_k: int) -> dict:
     # targetHits should be higher than the number of hits to return, for accuracy
@@ -35,8 +68,22 @@ def lexical_search(query_text: str, top_k: int) -> dict:
         "ranking.profile": "default",
     }
 
+def hybrid_search(query_text: str, top_k: int) -> dict:
+    target_hits = top_k * 10
+    return {
+        "yql": '''
+            select * from product where ({targetHits:100}nearestNeighbor(ProductName_embedding,q_embedding))
+             OR ({targetHits:100}nearestNeighbor(Description_embedding,q_embedding)) 
+             OR userQuery()
+            ''',
+        "query": query_text,
+        "input.query(q_embedding)": "embed(@query)",
+        "ranking.profile": "hybrid"
+    }
+
 QUERY_FUNCTION = lexical_search
 # QUERY_FUNCTION = vector_search
+# QUERY_FUNCTION = hybrid_search
 
 ########################################################
 ######## CONFIGURATION END ##############################
@@ -83,6 +130,9 @@ if __name__ == "__main__":
         sample_docs = dict(list(docs.items())[:3])
         print(f'  Sample: {sample_docs}')
 
+    print("================================================")
+    print(f"Evaluating {len(relevant_docs)} queries using query function: {QUERY_FUNCTION.__name__}")
+    print("================================================")
     evaluator = VespaEvaluator(
         # list of queries (ID, query text)
         queries=queries,
