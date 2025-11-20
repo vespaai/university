@@ -1,3 +1,0 @@
-<validation-overrides>
-    <allow until='2025-11-30'>hnsw-settings-change</allow>
-</validation-overrides>

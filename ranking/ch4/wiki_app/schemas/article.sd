@@ -2,7 +2,7 @@ schema article {
   document article {
     # this is also the document id
     field article_title_s type string {
-      indexing: summary | attribute
+      indexing: attribute
     }
     field chunk_ts type array<string> {
       indexing: summary | index
@@ -61,11 +61,58 @@ schema article {
     indexing: input modified_at_s | to_epoch_second | attribute | summary
   }
 
-  field chunk_embeddings type tensor<float>(chunk{}, x[384]) {
-    # TODO: summary is only useful for debugging. Remove it in production.
-    indexing: input chunk_ts | embed arctic | attribute | index | summary
+  # tokenized title
+  field article_title_t type string {
+    indexing: input article_title_s | index | summary
+  }
+
+  # title embedding
+  field article_title_embedding type tensor<float>(x[384]) {
+    indexing: input article_title_s | embed arctic | attribute | index
     attribute {
       distance-metric: prenormalized-angular
+    }
+  }
+
+  # where lexical search will be performed by default
+  fieldset default {
+    fields: article_title_t, chunk_ts
+  }
+
+  field chunk_embeddings type tensor<float>(chunk{}, x[384]) {
+    # add summary is for debugging, if you want to see the actual tensor values
+    indexing: input chunk_ts | embed arctic | attribute | index
+    attribute {
+      distance-metric: prenormalized-angular
+    }
+  }
+
+  document-summary top_3_chunks_bm25 {
+    summary article_title_t {}
+    summary chunks_top3_bm25 {
+        source: chunk_ts
+        # top_3_chunk_bm25_scores needs to be a summary-feature to the rank-profile.
+        # so it only works with per_chunk_lexical
+        select-elements-by: top_3_chunk_bm25_scores
+    }
+  }
+
+  document-summary top_3_chunks_semantic {
+    summary article_title_t {}
+    summary chunks_top3_semantic {
+        source: chunk_ts
+        # top_3_chunk_sim_scores needs to be a summary-feature to the rank-profile.
+        # so it only works with per_chunk_semantic
+        select-elements-by: top_3_chunk_sim_scores
+    }
+  }
+
+  document-summary top_3_chunks_by_hybrid_score {
+    summary article_title_t {}
+    summary chunks_top3_by_hybrid_score {
+        source: chunk_ts
+        # works with doc_and_chunks_hybrid
+        select-elements-by: top_3_chunk_hybrid_scores
     }
   }
 }
