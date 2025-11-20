@@ -1,0 +1,4 @@
+pyvespa
+requests
+tqdm
+python-dotenv

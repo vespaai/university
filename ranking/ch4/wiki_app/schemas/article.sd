@@ -1,0 +1,118 @@
+schema article {
+  document article {
+    # this is also the document id
+    field article_title_s type string {
+      indexing: attribute
+    }
+    field chunk_ts type array<string> {
+      indexing: summary | index
+    }
+
+    ### metadata fields
+    # example:
+    # {"article": "Binary_entropy_function", "characters": 3252, "words": 563, "sections": 11, "unique_references": 1, "watchers": 30, "revisions": 63, "editors": 41, "created_at": "2006-05-24T17:34:21Z", "modified_at": "2025-11-03T16:45:38Z", "links_ext_count": 2, "links_out_count": 31, "links_in_count": 45, "redirects_count": 2}
+
+    field characters_i type int {
+      indexing: summary | attribute
+    }
+    field words_i type int {
+      indexing: summary | attribute
+    }
+    field sections_i type int {
+      indexing: summary | attribute
+    }
+    field unique_references_i type int {
+      indexing: summary | attribute
+    }
+    field watchers_i type int {
+      indexing: summary | attribute
+    }
+    field revisions_i type int {
+      indexing: summary | attribute
+    }
+    field editors_i type int {
+      indexing: summary | attribute
+    }
+    field created_at_s type string {
+      indexing: summary
+    }
+    field modified_at_s type string {
+      indexing: summary
+    }
+    field links_ext_count_i type int {
+      indexing: summary | attribute
+    }
+    field links_out_count_i type int {
+      indexing: summary | attribute
+    }
+    field links_in_count_i type int {
+      indexing: summary | attribute
+    }
+    field redirects_count_i type int {
+      indexing: summary | attribute
+    }
+  }
+
+  # convert created_at and modified_at to date (well, long UNIX timestamp)
+  field created_at_l type long {
+    indexing: input created_at_s | to_epoch_second | attribute | summary
+  }
+  field modified_at_l type long {
+    indexing: input modified_at_s | to_epoch_second | attribute | summary
+  }
+
+  # tokenized title
+  field article_title_t type string {
+    indexing: input article_title_s | index | summary
+  }
+
+  # title embedding
+  field article_title_embedding type tensor<float>(x[384]) {
+    indexing: input article_title_s | embed arctic | attribute | index
+    attribute {
+      distance-metric: prenormalized-angular
+    }
+  }
+
+  # where lexical search will be performed by default
+  fieldset default {
+    fields: article_title_t, chunk_ts
+  }
+
+  field chunk_embeddings type tensor<float>(chunk{}, x[384]) {
+    # add summary is for debugging, if you want to see the actual tensor values
+    indexing: input chunk_ts | embed arctic | attribute | index
+    attribute {
+      distance-metric: prenormalized-angular
+    }
+  }
+
+  document-summary top_3_chunks_bm25 {
+    summary article_title_t {}
+    summary chunks_top3_bm25 {
+        source: chunk_ts
+        # top_3_chunk_bm25_scores needs to be a summary-feature to the rank-profile.
+        # so it only works with per_chunk_lexical
+        select-elements-by: top_3_chunk_bm25_scores
+    }
+  }
+
+  document-summary top_3_chunks_semantic {
+    summary article_title_t {}
+    summary chunks_top3_semantic {
+        source: chunk_ts
+        # top_3_chunk_sim_scores needs to be a summary-feature to the rank-profile.
+        # so it only works with per_chunk_semantic
+        select-elements-by: top_3_chunk_sim_scores
+    }
+  }
+
+  document-summary top_3_chunks_by_hybrid_score {
+    summary article_title_t {}
+    summary chunks_top3_by_hybrid_score {
+        source: chunk_ts
+        # works with doc_and_chunks_hybrid
+        select-elements-by: top_3_chunk_hybrid_scores
+    }
+  }
+}
