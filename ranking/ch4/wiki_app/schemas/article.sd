@@ -6,6 +6,7 @@ schema article {
     }
     field chunk_ts type array<string> {
       indexing: summary | index
+      index: enable-bm25
     }
 
     ### metadata fields
@@ -70,6 +71,7 @@ schema article {
   field article_title_embedding type tensor<float>(x[384]) {
     indexing: input article_title_s | embed arctic | attribute | index
     attribute {
+      # effectively dot product, which is the same as cosine similarity for prenormalized embeddings
       distance-metric: prenormalized-angular
     }
   }
@@ -81,38 +83,38 @@ schema article {
 
   field chunk_embeddings type tensor<float>(chunk{}, x[384]) {
     # add summary is for debugging, if you want to see the actual tensor values
-    indexing: input chunk_ts | embed arctic | attribute | index
+    indexing: input chunk_ts | embed arctic | attribute | index # | summary
     attribute {
       distance-metric: prenormalized-angular
     }
   }
 
-  document-summary top_3_chunks_bm25 {
-    summary article_title_t {}
-    summary chunks_top3_bm25 {
-        source: chunk_ts
-        # top_3_chunk_bm25_scores needs to be a summary-feature to the rank-profile.
-        # so it only works with per_chunk_lexical
-        select-elements-by: top_3_chunk_bm25_scores
-    }
-  }
+  # document-summary top_3_chunks_bm25 {
+  #   summary article_title_t {}
+  #   summary chunks_top3_bm25 {
+  #       source: chunk_ts
+  #       # top_3_chunk_bm25_scores needs to be a summary-feature to the rank-profile.
+  #       # so it only works with per_chunk_lexical
+  #       select-elements-by: top_3_chunk_bm25_scores
+  #   }
+  # }
 
-  document-summary top_3_chunks_semantic {
-    summary article_title_t {}
-    summary chunks_top3_semantic {
-        source: chunk_ts
-        # top_3_chunk_sim_scores needs to be a summary-feature to the rank-profile.
-        # so it only works with per_chunk_semantic
-        select-elements-by: top_3_chunk_sim_scores
-    }
-  }
+  # document-summary top_3_chunks_semantic {
+  #   summary article_title_t {}
+  #   summary chunks_top3_semantic {
+  #       source: chunk_ts
+  #       # top_3_chunk_sim_scores needs to be a summary-feature to the rank-profile.
+  #       # so it only works with per_chunk_semantic
+  #       select-elements-by: top_3_chunk_sim_scores
+  #   }
+  # }
 
-  document-summary top_3_chunks_by_hybrid_score {
-    summary article_title_t {}
-    summary chunks_top3_by_hybrid_score {
-        source: chunk_ts
-        # works with doc_and_chunks_hybrid
-        select-elements-by: top_3_chunk_hybrid_scores
-    }
-  }
+  # document-summary top_3_chunks_by_hybrid_score {
+  #   summary article_title_t {}
+  #   summary chunks_top3_by_hybrid_score {
+  #       source: chunk_ts
+  #       # works with doc_and_chunks_hybrid
+  #       select-elements-by: top_3_chunk_hybrid_scores
+  #   }
+  # }
 }

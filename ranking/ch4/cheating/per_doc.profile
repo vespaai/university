@@ -9,22 +9,22 @@ rank-profile per_doc {
         element-gap: 0
     }
 
-    rank-properties {
-        ### how to compute freshness (i.e. how the logarithmic decay curve should look like)
-        ## see https://docs.vespa.ai/en/reference/rank-features.html#freshness
-
-        # ages older than 3 years don't drop score anymore
-        freshness(modified_at_l).maxAge: 94672800
-        # at 1 year old, score is halved
-        freshness(modified_at_l).halfResponse: 31536000
-    }
-
     function native_rank_chunk_ts() {
         expression: nativeRank(chunk_ts)
     }
 
     function native_rank_article_title() {
         expression: nativeRank(article_title_t)
+    }
+
+    rank-properties {
+        ### how to compute freshness (i.e. how the logarithmic decay curve should look like)
+        ## see https://docs.vespa.ai/en/reference/rank-features.html#freshness
+
+        # at 3 years old, score is 0. It doesn't drop to negative
+        freshness(modified_at_l).maxAge: 94672800
+        # at 1 year old, score is halved
+        freshness(modified_at_l).halfResponse: 31536000
     }
 
     # bump fresher content
@@ -35,12 +35,7 @@ rank-profile per_doc {
     # bump content with more incoming links
     function normalized_links_in_count_i() {
         # Normalizes the number of incoming links to a value between 0 and 1.
-        # Because atan(x) returns a value between -π/2 and π/2. In our case,
-        # links_in_count_i is always positive, so atan(x) will be between 0 and π/2.
-        # 100 defines the value for links_in_count_i where the middle of the curve is (0.5),
-        # because atan(1) is π/4. After this, atan(x) grows asymptotically to π/2.
-        # For the curve itself, see https://commons.wikimedia.org/wiki/File:Arctangent.svg
-        # Tensor playground example: https://docs.vespa.ai/playground/#N4KABGBEBmkFxgNrgmUrWQPYAd5QFNIAaFDSPBdDTAO30gBsBLWgawGcB9VrgYywBXWgBceJMjUhEEkAJwAGBZEkQAvpLWkM1crgZFtUymlV0GtLACcAtgEMWALwIATLi3bdeA4WOYSaTBkoOxE7WgAKD04eWn4hUR4wAHowAEYlAEowACowACZkgGYAOjSAFjSAVjl8gDYqoqqADjkAdjkilUCNDF6wAF0QNSA
+        # Tensor playground example: https://docs.vespa.ai/playground/#N4KABGBEBmkFxgNrgmUrWQPYAd5QFNIAaFDSPBdDTAO30gBsBLWgawGcB9VrgYywBXWgBceJMjUhEEkAJwAGBZEkQAvpLWkM1crgZ8JNKJTSrMIhgAMAhiJu0AFAA8AlFbAAnAiMGfaHGA2YABuNoyCBGAARj4A7gQEtGBWALSAA8AA9ABMHg4AJilZuQB0ADq0FQCSyUKeYHw2HATEKSzs3LwCwmLMHsyB4XE2AJ6BOFgczCLMIS1gHFgpdg4u7mBxzIyMMVGxIglJKQp5tIVWxVbllbRWAIxKHvkE0KwEgSIAFlFhEVHQWHqVnanB4tH4QlEPA8cW+3jAXyiAFtmPl8owolhoAjvg0-HMwAMwI4FCUAKyuVqxRqCZrLexOO6uMAAXjAWQALFcKhUAILQEQEepfAatWwMtYeADmniwcUGHBGSJwIiwM0a2xGCKWFxyVjgPNoAEJECtknx8QQALqOT4iEQ4DhwTKZQQ4RhYGz5EqbNjMJEEfLMGwlQFSzK+5g4QPBzICJFIrABTJfQRI6KZAiZ7KZXmePgMqVJEQlDghcMAdg5AGYcM5UnmCw4i6JS+WSjhaFLXCpjBoMFpJLpMPpZERtFJTMPyPRZLRAUjwswAF6Brggzrg7pQ5hGYyEBhmxwbsEQno8MCZMAPBTMgBUYBz1ZKdw5dzJcmyADYydWyQAOOQKzkatexoftUAgq0QDUIA
         expression: atan(attribute(links_in_count_i) / 100) * 2/3.141592653589793
     }
 

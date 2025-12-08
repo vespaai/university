@@ -33,7 +33,7 @@ rank-profile per_chunk_lexical {
     #    }
     #}
     function top_3_chunk_bm25_scores() {
-        # the "8" here should be the median of the BM25 scores
+        # the "8" here should be the median, or a reasonably high BM25 score for us
         expression: top(3, normalized_chunk_bm25_scores(8))
     }
 
