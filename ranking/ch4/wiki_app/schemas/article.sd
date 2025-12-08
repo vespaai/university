@@ -89,32 +89,32 @@ schema article {
     }
   }
 
-  document-summary top_3_chunks_bm25 {
-    summary article_title_t {}
-    summary chunks_top3_bm25 {
-        source: chunk_ts
-        # top_3_chunk_bm25_scores needs to be a summary-feature to the rank-profile.
-        # so it only works with per_chunk_lexical
-        select-elements-by: top_3_chunk_bm25_scores
-    }
-  }
+  # document-summary top_3_chunks_bm25 {
+  #   summary article_title_t {}
+  #   summary chunks_top3_bm25 {
+  #       source: chunk_ts
+  #       # top_3_chunk_bm25_scores needs to be a summary-feature to the rank-profile.
+  #       # so it only works with per_chunk_lexical
+  #       select-elements-by: top_3_chunk_bm25_scores
+  #   }
+  # }
 
-  document-summary top_3_chunks_semantic {
-    summary article_title_t {}
-    summary chunks_top3_semantic {
-        source: chunk_ts
-        # top_3_chunk_sim_scores needs to be a summary-feature to the rank-profile.
-        # so it only works with per_chunk_semantic
-        select-elements-by: top_3_chunk_sim_scores
-    }
-  }
+  # document-summary top_3_chunks_semantic {
+  #   summary article_title_t {}
+  #   summary chunks_top3_semantic {
+  #       source: chunk_ts
+  #       # top_3_chunk_sim_scores needs to be a summary-feature to the rank-profile.
+  #       # so it only works with per_chunk_semantic
+  #       select-elements-by: top_3_chunk_sim_scores
+  #   }
+  # }
 
-  document-summary top_3_chunks_by_hybrid_score {
-    summary article_title_t {}
-    summary chunks_top3_by_hybrid_score {
-        source: chunk_ts
-        # works with doc_and_chunks_hybrid
-        select-elements-by: top_3_chunk_hybrid_scores
-    }
-  }
+  # document-summary top_3_chunks_by_hybrid_score {
+  #   summary article_title_t {}
+  #   summary chunks_top3_by_hybrid_score {
+  #       source: chunk_ts
+  #       # works with doc_and_chunks_hybrid
+  #       select-elements-by: top_3_chunk_hybrid_scores
+  #   }
+  # }
 }

@@ -1,4 +1,4 @@
-### How does data look like?
+### 1. How does data look like?
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
@@ -6,7 +6,7 @@ Content-Type: application/json
   "yql": "select * from article where true"
 }
 
-### Hybrid search on article as a whole
+### 2. Hybrid search on article as a whole
 ### NOTE: we match on per-chunk embeddings but we don't rank on them (yet)
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
@@ -18,7 +18,7 @@ Content-Type: application/json
   "ranking.profile": "per_doc"
 }
 
-### Lexical search per chunk
+### 3. Lexical search per chunk
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
@@ -29,7 +29,7 @@ Content-Type: application/json
   "summary": "top_3_chunks_bm25"
 }
 
-### Semantic search per chunk
+### 4. Semantic search per chunk
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
@@ -41,7 +41,7 @@ Content-Type: application/json
   "summary": "top_3_chunks_semantic"
 }
 
-### Article+chunk hybrid search
+### 5. Article+chunk hybrid search
 POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 

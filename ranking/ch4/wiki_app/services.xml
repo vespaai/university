@@ -52,9 +52,9 @@
             More details at https://docs.vespa.ai/en/reference/services.html#resources
         -->
         <nodes count="1">
-            <!-- <resources vcpu="4.0" memory="16Gb" architecture="x86_64" storage-type="local" disk="125Gb">
+            <resources vcpu="4.0" memory="16Gb" architecture="x86_64" storage-type="local" disk="125Gb">
                 <gpu count="1" memory="16.0Gb"/>
-            </resources> -->
+            </resources>
         </nodes>
     </container>
 
