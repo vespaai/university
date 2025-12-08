@@ -19,7 +19,7 @@ rank-profile per_chunk_lexical {
     # Playground example: https://docs.vespa.ai/playground/#N4KABGBEBmkFxgNrgmUrWQPYAd5QFNIAaFDSPBdDTAO30gCMBbAJgFYBnAYywCcCnEmRqQiCSABcCtTvwAU3ABYBXWgGtgAXwCUcYAB1aEA5ACMphGYDsAOnbEjJyK0tgADLbOPjYUwGY3AA5bax9nABY3AE53dzNQ9iMtSBEILREtUgxqclwGImzRSjQ0ugZafmYAQwAbAEsALwIAEwB9Fg5hGkxxKGrJatp5Tq5eAU4wAHowIJ0wACowVin-LwizdmjWADZ2f3Yg6Oto-1SejIwskVzMfIlCsop8W-J6CUlcM6KesQZPnDyfzESp8GoNZrtUY6c40S6oa45J73QjdYovMoQSDvfoANwA5m0Ad9MaiJAIWipuAR5MTiGBqgT6co1OoYWV4ekfqVfii-tysSVXuUJDUAB5o359SAUqk00HgpqtDpsBxgcXM1QadkXTIoAC6IC0QA
     function normalized_chunk_bm25_scores(bm25_scale) {
         expression {
-            # TODO expression that normalizes the chunk BM25 scores
+            atan(chunk_bm25_scores / bm25_scale) * 2/3.141592653589793
         }
     }
 
@@ -34,17 +34,17 @@ rank-profile per_chunk_lexical {
     #}
     function top_3_chunk_bm25_scores() {
         # the "8" here should be the median, or a reasonably high BM25 score for us
-        expression: # TODO
+        expression: top(3, normalized_chunk_bm25_scores(8))
     }
 
     # Returns the average of the top 3 chunks' BM25 scores.
     function avg_top_3_normalized_bm25() {
-        expression: # TODO
+        expression: reduce(top_3_chunk_bm25_scores(), avg, chunk)
     }
     
     # Returns the maximum of the chunk BM25 lexical scores.
     function max_normalized_bm25() {
-        expression: # TODO
+        expression: reduce(top_3_chunk_bm25_scores(), max, chunk)
     }
 
     summary-features {

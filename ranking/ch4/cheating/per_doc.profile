@@ -36,9 +36,7 @@ rank-profile per_doc {
     function normalized_links_in_count_i() {
         # Normalizes the number of incoming links to a value between 0 and 1.
         # Tensor playground example: https://docs.vespa.ai/playground/#N4KABGBEBmkFxgNrgmUrWQPYAd5QFNIAaFDSPBdDTAO30gBsBLWgawGcB9VrgYywBXWgBceJMjUhEEkAJwAGBZEkQAvpLWkM1crgZ8JNKJTSrMIhgAMAhiJu0AFAA8AlFbAAnAiMGfaHGA2YABuNoyCBGAARj4A7gQEtGBWALSAA8AA9ABMHg4AJilZuQB0ADq0FQCSyUKeYHw2HATEKSzs3LwCwmLMHsyB4XE2AJ6BOFgczCLMIS1gHFgpdg4u7mBxzIyMMVGxIglJKQp5tIVWxVbllbRWAIxKHvkE0KwEgSIAFlFhEVHQWHqVnanB4tH4QlEPA8cW+3jAXyiAFtmPl8owolhoAjvg0-HMwAMwI4FCUAKyuVqxRqCZrLexOO6uMAAXjAWQALFcKhUAILQEQEepfAatWwMtYeADmniwcUGHBGSJwIiwM0a2xGCKWFxyVjgPNoAEJECtknx8QQALqOT4iEQ4DhwTKZQQ4RhYGz5EqbNjMJEEfLMGwlQFSzK+5g4QPBzICJFIrABTJfQRI6KZAiZ7KZXmePgMqVJEQlDghcMAdg5AGYcM5UnmCw4i6JS+WSjhaFLXCpjBoMFpJLpMPpZERtFJTMPyPRZLRAUjwswAF6Brggzrg7pQ5hGYyEBhmxwbsEQno8MCZMAPBTMgBUYBz1ZKdw5dzJcmyADYydWyQAOOQKzkatexoftUAgq0QDUIA
-        expression {
-            # TODO expression that normalizes links_in_count_i
-        }
+        expression: atan(attribute(links_in_count_i) / 100) * 2/3.141592653589793
     }
 
     #########################################################

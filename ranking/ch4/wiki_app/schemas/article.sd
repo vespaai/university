@@ -6,6 +6,7 @@ schema article {
     }
     field chunk_ts type array<string> {
       indexing: summary | index
+      index: enable-bm25
     }
 
     ### metadata fields
@@ -70,6 +71,7 @@ schema article {
   field article_title_embedding type tensor<float>(x[384]) {
     indexing: input article_title_s | embed arctic | attribute | index
     attribute {
+      # effectively dot product, which is the same as cosine similarity for prenormalized embeddings
       distance-metric: prenormalized-angular
     }
   }
@@ -81,7 +83,7 @@ schema article {
 
   field chunk_embeddings type tensor<float>(chunk{}, x[384]) {
     # add summary is for debugging, if you want to see the actual tensor values
-    indexing: input chunk_ts | embed arctic | attribute | index
+    indexing: input chunk_ts | embed arctic | attribute | index # | summary
     attribute {
       distance-metric: prenormalized-angular
     }
