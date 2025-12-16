@@ -24,7 +24,7 @@ POST /search/
           "group": "items",
           "order": "-count()",
           "each": {
-            "output": "count()",
+            "output": "count()"
           }
         }
       }
