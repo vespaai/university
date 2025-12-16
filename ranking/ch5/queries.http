@@ -1,0 +1,40 @@
+### Which categories are available?
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "hits": 0,
+  "select": {
+    "where": true,
+    "grouping": [
+      {
+        "all": {
+          "group": "category",
+          "each": {
+            "output": "count()"
+          }
+        }
+      }
+    ]
+  }
+}
+
+### Global recommendations
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from sources * where true",
+  "ranking.features.query(user_profile)": "{\"Books\": {\"poetry\": 5, \"spirituality\": 2}, \"Electronics\":{\"USB cable\": 7}}",
+  "ranking.profile": "recommendations"
+}
+
+### Per-category recommendations
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "yql": "select * from product where category contains 'Books'",
+  "ranking.features.query(user_profile)": "{\"Books\": {\"poetry\": 5, \"spirituality\": 2}, \"Electronics\":{\"USB cable\": 7}}",
+  "ranking.profile": "recommendations"
+}
