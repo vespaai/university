@@ -1,0 +1,32 @@
+schema product {
+  document product {
+    field id type int {
+      indexing: attribute | summary
+    }
+
+    field category type string {
+      indexing: attribute | summary
+    }
+
+    field description type string {
+      indexing: index | summary
+      index: enable-bm25
+    }
+
+    field features type tensor<int8>(category{}, features{}) {
+      indexing: attribute | summary
+    }
+  }
+
+  rank-profile recommendations {
+    inputs {
+      query(user_profile) tensor<int8>(category{}, features{})
+    }
+
+    # Tensor playground example:
+    # https://docs.vespa.ai/playground/#N4KABGBEBmkFxgNrgmUrWQPYAd5QGNIAaFDSPBdDTAF30gBUBTAOwGcsAnMLaMAIZgCAGyy0AFgEtWAczBTazALaQyqAL7qNpDNXK4GzEuogV8+mpFYMcXLABMArgVoBBEzUzGEkJR24ACgIBJVluAE9gHTBoZlCnLmZ2aIBKKgAdSFFxaTkszMgkhwKwACYAOgAGYjAsgA8RUoBmao0NNS8tDB11SzNDXyJdK0o0UzoGFgCePkFhAS5Omm7NEYh+qEGoY3XMMc2zG187RxdaACFPLx2Gf04uYNDmcK4omLiEpJSNdLQskJcUrALIAIxETmYpUqNTqkGUOFkLVaVXayx62j2m2wY2y13IBwmZnovgAquxmDw7Mw4klWARkmBAgICPZ2OxBCIRAswtwpMlUujNJi+hMcUZ8fsLESoMcoNTaWwGexJeQfFB7kEQry3tFap9aIlkmlCoDgWCIVD8ABWNq1AFiSQyJEWC2Q0q22ENJr4ACMaImqwgvT0Yu2eL2ZkJNw1DAAIuIwKdnK5ePwDUb2BUwBdmCEnBSwPECBIFEplLxWCIImBQcwxHIObQsJXmDyXpFagIuWBJG3cpT269+RyAO5YJwiBzCLCsWhcKSgpxKMCjxSlqoVIXBkWhrzi3y7MXRm7WBgOcQABXsKfcqu8DHYTmUgSfL+T5zcYAAVEmkor6WSWptQ7N5Un1eJDW+QVA13VBsXDI99xPfc5UgC9aA-VwrkjB9fDfV9n0CLDLh-P8aUpJUgKHSJwNiSDMxgrptBQABdEANCAA
+
+    #TODO: first phase expression
+
+  }
+}

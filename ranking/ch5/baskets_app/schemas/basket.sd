@@ -1,0 +1,7 @@
+schema basket {
+  document basket {
+    field items type array<string> {
+      indexing: attribute | summary
+    }
+  }
+}
