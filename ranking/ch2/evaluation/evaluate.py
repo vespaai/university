@@ -1,5 +1,6 @@
 from vespa.application import Vespa
 from vespa.evaluation import VespaEvaluator
+import argparse
 import csv
 import os
 from pathlib import Path
@@ -81,8 +82,8 @@ def hybrid_search(query_text: str, top_k: int) -> dict:
         "ranking.profile": "hybrid"
     }
 
-QUERY_FUNCTION = lexical_search
-# QUERY_FUNCTION = vector_search
+# QUERY_FUNCTION = lexical_search
+QUERY_FUNCTION = vector_search
 # QUERY_FUNCTION = hybrid_search
 
 ########################################################
@@ -90,6 +91,14 @@ QUERY_FUNCTION = lexical_search
 ########################################################
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Evaluate Vespa ranking using judgements.")
+    parser.add_argument(
+        "-j", "--judgements",
+        default="judgements.csv",
+        help="Path to judgements CSV file (default: judgements.csv)",
+    )
+    args = parser.parse_args()
+
     # Load queries from CSV file
     queries = {}
     with open('queries.csv', 'r') as file:
@@ -105,7 +114,7 @@ if __name__ == "__main__":
 
     # Load judgements from CSV file
     relevant_docs = {}
-    with open('judgements.csv', 'r') as file:
+    with open(args.judgements, 'r') as file:
         csv_reader = csv.DictReader(file)
         for row in csv_reader:
             query_id = row['query_id']
