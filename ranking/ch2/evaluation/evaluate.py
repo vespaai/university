@@ -82,8 +82,8 @@ def hybrid_search(query_text: str, top_k: int) -> dict:
         "ranking.profile": "hybrid"
     }
 
-# QUERY_FUNCTION = lexical_search
-QUERY_FUNCTION = vector_search
+QUERY_FUNCTION = lexical_search
+# QUERY_FUNCTION = vector_search
 # QUERY_FUNCTION = hybrid_search
 
 ########################################################
