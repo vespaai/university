@@ -15,17 +15,17 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--input",
-        default="ranking/ch2/evaluation/judgements.csv",
+        default="../../ch2/evaluation/judgements.csv",
         help="Path to source judgements CSV.",
     )
     parser.add_argument(
         "--train-output",
-        default="ranking/ch7/dataset/judgements_train.csv",
+        default="judgements_train.csv",
         help="Path to output train CSV.",
     )
     parser.add_argument(
         "--val-output",
-        default="ranking/ch7/dataset/judgements_val.csv",
+        default="judgements_val.csv",
         help="Path to output validation CSV.",
     )
     parser.add_argument(
