@@ -8,11 +8,18 @@
 
 import csv
 import json
-import requests
+import logging
 import os
+import random
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+
+import openai
+import requests
 from openai import OpenAI
-import traceback
+
 import evaluate
 
 # Try to load .env file if it exists
@@ -21,6 +28,10 @@ try:
     load_dotenv()
 except ImportError:
     print("Note: python-dotenv not installed. Install with 'pip install python-dotenv' to use .env files.")
+
+LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s [%(levelname)s] %(message)s')
+logger = logging.getLogger(__name__)
 
 ########################################################
 ######## CONFIGURATION BEGIN ############################
@@ -40,6 +51,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 HITS = int(os.getenv('HITS', '100'))  # number of documents to return from Vespa and evaluate
 QUERIES_FILE = os.getenv('QUERIES_FILE', 'queries.csv')
 JUDGEMENTS_FILE = os.getenv('JUDGEMENTS_FILE', 'judgements.csv')
+NUM_THREADS = int(os.getenv('NUM_THREADS', '8'))
 
 # Validate certificate paths
 MTLS_CERT_PATH = None
@@ -52,28 +64,33 @@ if VESPA_CERT_PATH and VESPA_KEY_PATH:
     if cert_path.exists() and key_path.exists():
         MTLS_CERT_PATH = str(cert_path)
         MTLS_KEY_PATH = str(key_path)
-        print(f"Using mTLS with cert: {cert_path}")
+        logger.info("Using mTLS with cert: %s", cert_path)
     else:
-        print(f"Warning: Certificate or key file not found. Connecting without mTLS.")
+        logger.warning("Certificate or key file not found. Connecting without mTLS.")
         if not cert_path.exists():
-            print(f"  Cert not found: {cert_path}")
+            logger.warning("  Cert not found: %s", cert_path)
         if not key_path.exists():
-            print(f"  Key not found: {key_path}")
+            logger.warning("  Key not found: %s", key_path)
 else:
-    print(f"Connecting to Vespa without mTLS (no cert/key configured)")
+    logger.info("Connecting to Vespa without mTLS (no cert/key configured)")
 
-print(f"Vespa endpoint: {VESPA_ENDPOINT}")
-print(f"Will request {HITS} hits per query function")
+logger.info("Vespa endpoint: %s", VESPA_ENDPOINT)
+logger.info("Will request %d hits per query function", HITS)
 
 # Query functions to use from evaluate.py
 # Use an array to combine multiple search strategies and 
 # Results will be concatenated and deduplicated by document ID get multiple perspectives
-QUERY_FUNCTIONS = [evaluate.vector_search, evaluate.lexical_search]
+# QUERY_FUNCTIONS = [evaluate.vector_search, evaluate.lexical_search]
 # QUERY_FUNCTIONS = [evaluate.vector_search]  # Single function
-# QUERY_FUNCTIONS = [evaluate.lexical_search]  # Single function
+QUERY_FUNCTIONS = [evaluate.lexical_search]  # Single function
 
-print(f"Using {len(QUERY_FUNCTIONS)} query function(s): {[f.__name__ for f in QUERY_FUNCTIONS]}")
-print(f"Max documents to evaluate per query: {HITS * len(QUERY_FUNCTIONS)} (before deduplication)")
+logger.info("Using %d query function(s): %s", len(QUERY_FUNCTIONS), [f.__name__ for f in QUERY_FUNCTIONS])
+logger.info("Max documents to evaluate per query: %d (before deduplication)", HITS * len(QUERY_FUNCTIONS))
+logger.info("Using %d threads", NUM_THREADS)
+
+# OpenAI client (created once, thread-safe)
+# TODO: consider using requests.Session per thread for Vespa connection pooling
+openai_client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 ########################################################
 ######## CONFIGURATION END ##############################
@@ -106,7 +123,7 @@ def load_existing_judgements_rows():
                 if row.get('query_id') and row.get('document_id'):
                     existing_rows.append(row)
     except Exception as e:
-        print(f"Error loading existing judgements: {e}")
+        logger.error("Error loading existing judgements: %s", e)
     
     return existing_rows
 
@@ -154,11 +171,12 @@ def execute_vespa_query(query_text):
         
         duplicate_count = len(documents) - added_count
         if len(QUERY_FUNCTIONS) > 1:
-            print(f"  {query_func.__name__}: {len(documents)} documents ({added_count} new, {duplicate_count} duplicates)")
+            logger.info("  %s: %d documents (%d new, %d duplicates)",
+                        query_func.__name__, len(documents), added_count, duplicate_count)
     
     # Show deduplication summary
     if len(QUERY_FUNCTIONS) > 1:
-        print(f"  Combined: {len(all_documents)} unique documents (from {total_before_dedup} total)")
+        logger.info("  Combined: %d unique documents (from %d total)", len(all_documents), total_before_dedup)
     
     # Return in the same format as original response
     return {
@@ -167,10 +185,25 @@ def execute_vespa_query(query_text):
         }
     }
 
+def call_openai_with_backoff(prompt, max_retries=7):
+    """Call OpenAI API with exponential backoff on rate limit errors."""
+    delay = 1.0
+    for attempt in range(max_retries + 1):
+        try:
+            return openai_client.responses.create(
+                model="gpt-5-mini",
+                input=prompt
+            )
+        except openai.RateLimitError:
+            if attempt == max_retries:
+                raise
+            sleep_time = delay * (2 ** attempt) * (1 + random.random())
+            logger.warning("Rate limited (attempt %d/%d), retrying in %.1fs...",
+                           attempt + 1, max_retries, sleep_time)
+            time.sleep(sleep_time)
+
 def get_openai_judgements(query_text, documents):
     """Get relevance judgements from OpenAI for query-document pairs using micro-batches."""
-    client = OpenAI(api_key=OPENAI_API_KEY)
-
     total_docs = len(documents)
     if total_docs == 0:
         return []
@@ -230,14 +263,10 @@ Example:
 [{{"ProductID":"123","rating":2}},{{"ProductID":"456","rating":0}}]
 """
 
-        # Show batch progress
-        print(f"\rEvaluating batch {batch_index + 1}/{num_batches} ({len(batch_docs)} docs)...", end='', flush=True)
+        logger.info("Evaluating batch %d/%d (%d docs)...", batch_index + 1, num_batches, len(batch_docs))
 
         try:
-            response = client.responses.create(
-                model="gpt-5-mini",
-                input=prompt
-            )
+            response = call_openai_with_backoff(prompt)
 
             response_text = response.output_text.strip()
             parsed = json.loads(response_text)
@@ -262,7 +291,7 @@ Example:
                 raise ValueError(f"Expected {len(batch_docs)} ratings, got {len(parsed)}. Missing IDs will default to 0.")
 
         except Exception as e:
-            print(f"\nError getting batch ratings: {e}")
+            logger.error("Error getting batch ratings: %s", e)
             continue
 
         # Build judgements for this batch
@@ -275,100 +304,115 @@ Example:
                 'rating': rating
             })
 
-    print(f"\rCompleted evaluation of {total_docs} documents in {num_batches} batches.")
+    logger.info("Completed evaluation of %d documents in %d batches.", total_docs, num_batches)
     return judgements
 
-def save_judgements(new_judgements):
-    """Save judgements to CSV file, appending new ones to existing."""
-    # Load all existing judgements using the reusable function
-    all_judgements = load_existing_judgements_rows()
-    
-    # Add new judgements
-    all_judgements.extend(new_judgements)
-    
-    # Write all judgements back to file
-    with open(JUDGEMENTS_FILE, 'w', newline='', encoding='utf-8') as f:
-        fieldnames = ['query_id', 'document_id', 'rating']
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(all_judgements)
+def save_judgements(new_judgements, lock):
+    """Append new judgements to CSV file (thread-safe)."""
+    fieldnames = ['query_id', 'document_id', 'rating']
+    with lock:
+        file_exists = os.path.exists(JUDGEMENTS_FILE) and os.path.getsize(JUDGEMENTS_FILE) > 0
+        with open(JUDGEMENTS_FILE, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            if not file_exists:
+                writer.writeheader()
+            writer.writerows(new_judgements)
+
+def process_query(query, existing_judgements, judgements_lock):
+    """Process a single query: search Vespa, filter, get OpenAI judgements, save."""
+    query_id = query['query_id']
+    query_text = query['query_text']
+
+    # Execute Vespa query
+    results = execute_vespa_query(query_text)
+
+    # Extract documents from results
+    documents = results.get('root', {}).get('children', [])
+    doc_fields = [doc.get('fields', {}) for doc in documents]
+
+    if not doc_fields:
+        logger.info("No results for query: %s", query_text)
+        return 0
+
+    # Filter out documents that already have judgements
+    new_doc_fields = []
+    skipped_count = 0
+    with judgements_lock:
+        for doc in doc_fields:
+            doc_id = doc.get('ProductID', '')
+            pair = (query_id, doc_id)
+            if pair not in existing_judgements:
+                new_doc_fields.append(doc)
+            else:
+                logger.debug("Skipping document %s for query %s - already evaluated", doc_id, query_id)
+                skipped_count += 1
+
+    if skipped_count > 0:
+        logger.info("Query %s: %d/%d docs already evaluated", query_id, skipped_count, len(doc_fields))
+
+    if not new_doc_fields:
+        logger.info("No new documents to evaluate for query: %s - skipping", query_text)
+        return 0
+
+    logger.info("Query %s: evaluating %d new documents (out of %d total)",
+                query_id, len(new_doc_fields), len(doc_fields))
+
+    # Get OpenAI judgements for new documents only
+    judgements = get_openai_judgements(query_text, new_doc_fields)
+
+    # Set query_id for all judgements
+    for judgement in judgements:
+        judgement['query_id'] = query_id
+
+    # Save judgements immediately after each query to avoid losing work
+    if judgements:
+        logger.info("Saving %d new judgements for query %s...", len(judgements), query_id)
+        save_judgements(judgements, judgements_lock)
+        logger.info("Saved! Judgements appended to %s", JUDGEMENTS_FILE)
+
+    # Add new judgements to existing set to avoid duplicates in subsequent queries
+    with judgements_lock:
+        for judgement in judgements:
+            existing_judgements.add((judgement['query_id'], judgement['document_id']))
+
+    return len(judgements)
 
 def main():
     """Main function to process all queries and generate judgements."""
-    print("Loading queries...")
+    logger.info("Loading queries...")
     queries = load_queries()
     
-    print("Loading existing judgements...")
+    logger.info("Loading existing judgements...")
     existing_judgements = load_existing_judgements()
-    print(f"Found {len(existing_judgements)} existing judgements")
+    logger.info("Found %d existing judgements", len(existing_judgements))
 
-    all_new_judgements = []
+    # To limit queries for testing, slice: queries[:10]
+    judgements_lock = threading.Lock()
+    total = len(queries)
+    completed = 0
 
-    for i, query in enumerate(queries, 1):
-        print(f"Processing query {i}/{len(queries)}: {query['query_text']}")
+    with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
+        futures = {
+            executor.submit(process_query, query, existing_judgements, judgements_lock): query
+            for query in queries
+        }
+        for future in as_completed(futures):
+            query = futures[future]
+            try:
+                future.result()
+            except Exception:
+                logger.error("Error processing query %s", query['query_id'], exc_info=True)
+            completed += 1
+            logger.info("Progress: %d/%d queries done", completed, total)
 
-        try:
-            # Execute Vespa query
-            results = execute_vespa_query(query['query_text'])
-
-            # Extract documents from results
-            documents = results.get('root', {}).get('children', [])
-            doc_fields = [doc.get('fields', {}) for doc in documents]
-
-            if not doc_fields:
-                print(f"No results for query: {query['query_text']}")
-                continue
-
-            # Filter out documents that already have judgements
-            new_doc_fields = []
-            for doc in doc_fields:
-                doc_id = doc.get('ProductID', '')
-                pair = (query['query_id'], doc_id)
-                if pair not in existing_judgements:
-                    new_doc_fields.append(doc)
-                else:
-                    print(f"Skipping document {doc_id} for query {query['query_id']} - already evaluated")
-            
-            if not new_doc_fields:
-                print(f"No new documents to evaluate for query: {query['query_text']} - skipping")
-                continue
-            
-            print(f"Evaluating {len(new_doc_fields)} new documents (out of {len(doc_fields)} total)")
-
-            # Get OpenAI judgements for new documents only
-            judgements = get_openai_judgements(query['query_text'], new_doc_fields)
-
-            # Set query_id for all judgements
-            for judgement in judgements:
-                judgement['query_id'] = query['query_id']
-
-            # Save judgements immediately after each query to avoid losing work
-            if judgements:
-                print(f"Saving {len(judgements)} new judgements for query {query['query_id']}...")
-                save_judgements(judgements)
-                print(f"Saved! Judgements appended to {JUDGEMENTS_FILE}")
-            
-            # Add new judgements to existing set to avoid duplicates in subsequent queries
-            for judgement in judgements:
-                existing_judgements.add((judgement['query_id'], judgement['document_id']))
-
-        except Exception as e:
-            print(f"Error processing query {query['query_id']}")
-            traceback.print_exc()
-            continue
-    
-        # # stop after N queries
-        # if i > 10:
-        #     break
-
-    print("Processing complete!")
+    logger.info("Processing complete!")
 
 if __name__ == "__main__":
     if not OPENAI_API_KEY:
-        print("ERROR: OPENAI_API_KEY is required but not set.")
-        print("Please set it via:")
-        print("  1. Environment variable: export OPENAI_API_KEY='your-key'")
-        print("  2. .env file: OPENAI_API_KEY=your-key")
-        print("\nAsk your instructor if you don't have an OpenAI API key.")
+        logger.error("OPENAI_API_KEY is required but not set.")
+        logger.error("Please set it via:")
+        logger.error("  1. Environment variable: export OPENAI_API_KEY='your-key'")
+        logger.error("  2. .env file: OPENAI_API_KEY=your-key")
+        logger.error("Ask your instructor if you don't have an OpenAI API key.")
         exit(1)
     main()
