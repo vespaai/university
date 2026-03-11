@@ -80,21 +80,32 @@ logger.info("Will request %d hits per query function", HITS)
 # Query functions to use from evaluate.py
 # Use an array to combine multiple search strategies and 
 # Results will be concatenated and deduplicated by document ID get multiple perspectives
-# QUERY_FUNCTIONS = [evaluate.vector_search, evaluate.lexical_search]
+QUERY_FUNCTIONS = [evaluate.vector_search, evaluate.lexical_search]
 # QUERY_FUNCTIONS = [evaluate.vector_search]  # Single function
-QUERY_FUNCTIONS = [evaluate.lexical_search]  # Single function
+# QUERY_FUNCTIONS = [evaluate.lexical_search]  # Single function
 
 logger.info("Using %d query function(s): %s", len(QUERY_FUNCTIONS), [f.__name__ for f in QUERY_FUNCTIONS])
 logger.info("Max documents to evaluate per query: %d (before deduplication)", HITS * len(QUERY_FUNCTIONS))
 logger.info("Using %d threads", NUM_THREADS)
 
-# OpenAI client (created once, thread-safe)
-# TODO: consider using requests.Session per thread for Vespa connection pooling
+# OpenAI client
 openai_client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 ########################################################
 ######## CONFIGURATION END ##############################
 ########################################################
+
+_thread_local = threading.local()
+
+def _get_session():
+    """Return a per-thread requests.Session, recreating it on connection errors."""
+    if not hasattr(_thread_local, 'session'):
+        _thread_local.session = requests.Session()
+    return _thread_local.session
+
+def _reset_session():
+    """Discard the current thread's session so the next call creates a fresh one."""
+    _thread_local.session = requests.Session()
 
 def load_queries():
     """Load queries from CSV file."""
@@ -151,7 +162,12 @@ def execute_vespa_query(query_text):
     for query_func in QUERY_FUNCTIONS:
         payload = query_func(query_text, HITS)
         
-        response = requests.post(VESPA_ENDPOINT, headers=headers, json=payload, cert=cert)
+        try:
+            response = _get_session().post(VESPA_ENDPOINT, headers=headers, json=payload, cert=cert)
+        except requests.ConnectionError:
+            logger.warning("Connection error to Vespa, retrying with fresh session...")
+            _reset_session()
+            response = _get_session().post(VESPA_ENDPOINT, headers=headers, json=payload, cert=cert)
         response.raise_for_status()
         
         result = response.json()
