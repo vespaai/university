@@ -1,4 +1,5 @@
-requests
-openai
-pyvespa>=1.1.2
-python-dotenv
+requests>=2.34.0
+openai>=2.36.0
+pyvespa>=1.2.0
+python-dotenv>=1.2.2
+urllib3>=2.7.0
