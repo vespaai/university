@@ -1,4 +1,5 @@
-pyvespa>=1.1.2
-requests
-tqdm
-python-dotenv
+pyvespa>=1.2.0
+requests>=2.34.0
+tqdm>=4.67.3
+python-dotenv>=1.2.2
+urllib3>=2.7.0
