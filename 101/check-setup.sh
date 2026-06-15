@@ -2,14 +2,14 @@
 
 cd $HOME
 
-tgt=$(vespa config get target -c never 2>&1)
+tgt=$(vespa config get target -c never | grep -v "^Got" 2>&1)
 if [ "$tgt" != "target = cloud" ]; then
 	msg="Configure the CLI to target Vespa Cloud: vespa config set target cloud"
 	echo "$msg"
 	exit 1
 fi
 
-app=$(vespa config get application -c never 2>&1)
+app=$(vespa config get application -c never | grep -v "^Got" 2>&1)
 if [ "$app" = "application = <unset>" ]; then
 	msg="Configure the CLI: vespa config set application <tenant>.<application>"
 	echo "$msg"
