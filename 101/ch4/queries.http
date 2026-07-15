@@ -37,9 +37,13 @@ Content-Type: application/json
 #     --timeout 60 \
 #     --header="X-LLM-API-KEY:insert-api-key-here" \
 #     query="what kind of mini stencils do you have for sale?" \
+#     query_text="mini stencil" \
+#     'input.query(embedding_query_variable)'='embed(@query_text)' \
+#     yql='select * from product where title contains @query_text OR ({targetHits:100}nearestNeighbor(EMBEDDING_FIELD,EMBEDDING_QUERY_VARIABLE))' \
+#     ranking.profile=HYBRID_SEARCH_RANK_PROFILE \
 #     presentation.summary=medium \
 #     hits=5 \
-#     searchChain=openai_search_chain \
+#     searchChain=OPENAI_SEARCH_CHAIN \
 #     format=sse \
 #     traceLevel=1
 
