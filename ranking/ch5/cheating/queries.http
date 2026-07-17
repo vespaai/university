@@ -1,0 +1,33 @@
+### Basket co-occurrence: say that I bought "whole milk" already.
+### Which other products appear most often in baskets that contain it?
+### Note: the top group is "whole milk" itself (it's in every matching basket),
+### so we ask for 4 groups — the next 3 are the recommendations.
+POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
+Content-Type: application/json
+
+{
+  "hits": 1,
+  "select": {
+    "where": {
+      "contains": [
+        "items",
+        "whole milk"
+      ]
+    },
+    "grouping": [
+      {
+        "all": {
+          "group": "items",
+          "max": 4,
+          "order": "-count()",
+          "each": {
+            "output": "count()"
+          }
+        }
+      }
+    ]
+  }
+}
+
+### The same query, with grouping in YQL, for the terminal:
+# vespa query 'yql=select * from basket where items contains "whole milk" | all(group(items) max(4) order(-count()) each(output(count())))' hits=1

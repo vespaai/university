@@ -48,7 +48,7 @@ schema product {
        }
 
        # use in ranking
-       field AverageRating type string {
+       field AverageRating type float {
           indexing: summary | attribute
        }
 

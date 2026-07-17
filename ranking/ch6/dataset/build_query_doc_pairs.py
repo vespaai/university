@@ -28,27 +28,27 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--judgements",
-        default="ranking/ch7/dataset/judgements_train.csv",
+        default="judgements_train.csv",
         help="Training judgements CSV path.",
     )
     parser.add_argument(
         "--queries",
-        default="ranking/ch2/evaluation/queries.csv",
+        default="../../ch2/evaluation/queries.csv",
         help="Queries CSV path.",
     )
     parser.add_argument(
         "--products",
-        default="ranking/ch1/dataset/products.jsonl",
+        default="../../ch1/dataset/products.jsonl",
         help="Products JSONL path.",
     )
     parser.add_argument(
         "--output",
-        default="ranking/ch7/dataset/train_pairs.jsonl",
+        default="train_pairs.jsonl",
         help="Output JSONL path with anchor/positive pairs.",
     )
     parser.add_argument(
         "--metadata-output",
-        default="ranking/ch7/dataset/train_pairs_metadata.csv",
+        default="train_pairs_metadata.csv",
         help="Output CSV path for pair metadata.",
     )
     parser.add_argument(

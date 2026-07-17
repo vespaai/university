@@ -29,32 +29,32 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--pairs",
-        default="ranking/ch7/dataset/train_pairs.jsonl",
+        default="../train_pairs.jsonl",
         help="Input JSONL with anchor/positive pairs.",
     )
     parser.add_argument(
         "--pairs-metadata",
-        default="ranking/ch7/dataset/train_pairs_metadata.csv",
+        default="../train_pairs_metadata.csv",
         help="Metadata CSV aligned line-by-line with --pairs.",
     )
     parser.add_argument(
         "--judgements",
-        default="ranking/ch7/dataset/judgements_train.csv",
+        default="../judgements_train.csv",
         help="Training judgements CSV used to find rating=0 negatives.",
     )
     parser.add_argument(
         "--products",
-        default="ranking/ch1/dataset/products.jsonl",
+        default="../../../ch1/dataset/products.jsonl",
         help="Products JSONL used to fetch negative text.",
     )
     parser.add_argument(
         "--output",
-        default="ranking/ch7/dataset/train_triplets.jsonl",
+        default="train_triplets.jsonl",
         help="Output triplets JSONL path.",
     )
     parser.add_argument(
         "--metadata-output",
-        default="ranking/ch7/dataset/train_triplets_metadata.csv",
+        default="train_triplets_metadata.csv",
         help="Output triplet metadata CSV path.",
     )
     parser.add_argument(

@@ -14,7 +14,7 @@ rank-profile preferences {
     summary-features: my_bm25 my_nativeRank
 
     first-phase {
-        expression: (my_bm25() + my_nativeRank()) * attribute(AverageRating)
+        expression: (my_bm25() + my_nativeRank()) * (1 + attribute(AverageRating))
     }
 
     second-phase {

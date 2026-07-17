@@ -12,12 +12,10 @@ def main(test_csv, model_file):
     # Load native LightGBM model
     model = lgb.Booster(model_file=model_file)
     
-    # Prepare features (same order as training)
-    feature_cols = [
-        'Price', 'AverageRating', 'closeness_description', 'closeness_productname',
-        'native_rank_description', 'native_rank_name'
-    ]
-    
+    # Take feature names (and their order) from the model itself:
+    # LightGBM predicts positionally and does not reorder columns by name
+    feature_cols = model.feature_name()
+
     X = df[feature_cols]
     y_true = df['relevance_label'].values
     

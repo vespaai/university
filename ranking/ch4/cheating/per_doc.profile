@@ -4,7 +4,7 @@ rank-profile per_doc {
     ### lexical score
     #########################################################
     rank chunk_ts {
-        # consider all content_ts elements as a single text
+        # consider all chunk_ts elements as a single text
         # i.e. phrases work across consecutive chunks
         element-gap: 0
     }

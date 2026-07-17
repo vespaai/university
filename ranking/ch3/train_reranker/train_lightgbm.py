@@ -256,8 +256,11 @@ def perform_cross_validation(
                     break
 
         X_final = X[final_feature_cols]
+        # restore the original feature names: both evaluate_model.py and
+        # Vespa's lightgbm() rank feature match model features by name
+        X_final.columns = final_features
         full_dataset = lgb.Dataset(
-            X_final, y, categorical_feature=categorical_feature_idx
+            X_final, y, categorical_feature=[c for c in cat_cols if c in final_features]
         )
         final_model = lgb.train(
             params, full_dataset, num_boost_round=final_boost_rounds
@@ -265,16 +268,6 @@ def perform_cross_validation(
 
         # Export model
         model_json = final_model.dump_model()
-
-        # Replace feature names in the model JSON with original names
-        model_json_str = json.dumps(model_json)
-        for renamed_feature, original_feature in feature_name_mapping.items():
-            escaped_renamed = re.escape(renamed_feature)
-            model_json_str = re.sub(
-                rf'"{escaped_renamed}"', f'"{original_feature}"', model_json_str
-            )
-
-        model_json = json.loads(model_json_str)
 
         try:
             # Save JSON model for Vespa

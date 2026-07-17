@@ -41,10 +41,13 @@ ephost=${endpoint#https://}
 ENDPOINT_DNS=${ephost%/}
 
 # create a .env file from env.example
-cp env.example .env
+# -i prompts before overwriting an existing .env (e.g. one where you already
+# filled in OPENAI_API_KEY) - answer "n" to keep it
+cp -i env.example .env
 
-# replace the placeholders in the .env file
-sed -i "s|<mTLS_ENDPOINT_DNS_GOES_HERE>|$ENDPOINT_DNS|" .env
+# replace the endpoint placeholder - or a stale endpoint (e.g. after
+# "vespa destroy" + redeploy), since a kept .env survives the cp -i above
+sed -i -E "s#<mTLS_ENDPOINT_DNS_GOES_HERE>|[a-z0-9]+\.[a-z0-9]+\.z\.vespa-app\.cloud#$ENDPOINT_DNS#g" .env
 sed -i "s|<YOUR_TENANT>.<YOUR_APPLICATION>.default|$app|" .env
 
 echo "done"
