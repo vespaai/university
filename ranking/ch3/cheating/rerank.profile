@@ -1,4 +1,4 @@
-rank-profile debug {
+rank-profile rerank {
 # get the scoring components
 
     ## lexical search

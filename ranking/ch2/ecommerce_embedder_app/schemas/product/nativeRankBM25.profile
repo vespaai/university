@@ -1,4 +1,4 @@
-rank-profile ratingboost {
+rank-profile nativeRankBM25 {
     function my_bm25() {
         expression: bm25(ProductName)
     }
@@ -10,6 +10,6 @@ rank-profile ratingboost {
     summary-features: my_bm25 my_nativeRank
 
     first-phase {
-        expression: (my_bm25() + my_nativeRank()) * (1 + attribute(AverageRating))
+        expression: my_bm25() + my_nativeRank()
     }
 }

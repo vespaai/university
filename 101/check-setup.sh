@@ -83,12 +83,14 @@ else
 	sudo service code-server restart
 fi
 
+# rewrite the endpoint placeholder, but also any previous endpoint left over
+# from before a 'vespa destroy' + redeploy (which changes the endpoint DNS)
 find $HOME/lab -name '*.http' -print0 |
-	xargs -0 perl -pi -e "s{<mTLS_ENDPOINT_DNS_GOES_HERE>}{$ENDPOINT_DNS}"
+	xargs -0 -r perl -pi -e "s{<mTLS_ENDPOINT_DNS_GOES_HERE>|[a-z0-9]+\.[a-z0-9]+\.z\.vespa-app\.cloud}{$ENDPOINT_DNS}g"
 
 # replace 1970-01-01 in all validation-overrides.xml files in the lab directory
 # with the current date + 20 days in YYYY-MM-DD format
 find $HOME/lab -name 'validation-overrides.xml' -print0 |
-	xargs -0 perl -pi -e "s{1970-01-01}{$(date -d '20 days' +%Y-%m-%d)}"
+	xargs -0 -r perl -pi -e "s{1970-01-01}{$(date -d '20 days' +%Y-%m-%d)}"
 
 exit 0
