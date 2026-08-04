@@ -1,6 +1,6 @@
 requests>=2.34.2
-openai>=2.41.1
-pyvespa>=1.2.1
+openai>=2.53.0
+pyvespa>=1.2.4
 python-dotenv>=1.2.2
 urllib3>=2.7.0
-tornado>=6.5.6
+tornado>=6.5.7
