@@ -3,7 +3,7 @@ POST https://<mTLS_ENDPOINT_DNS_GOES_HERE>/search/
 Content-Type: application/json
 
 {
-  "yql": "select * from product where default contains 'shirt'
+  "yql": "select * from product where default contains 'shirt'"
 }
 
 ### query limited in several ways
