@@ -4,6 +4,9 @@ rank-profile per_doc {
     ### lexical score
     #########################################################
     rank chunk_ts {
+        # chunk_ts is an array of strings (see schema)
+        # each string is a paragraph of the Wiki article
+        
         # consider all chunk_ts elements as a single text
         # i.e. phrases work across consecutive chunks
         element-gap: 0
