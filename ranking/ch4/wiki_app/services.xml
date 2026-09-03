@@ -13,10 +13,12 @@
     <container id="default" version="1.0">
 
         <component id="arctic" type="hugging-face-embedder">
-            <transformer-model url="https://huggingface.co/Snowflake/snowflake-arctic-embed-xs/resolve/main/onnx/model.onnx"/>
-            <tokenizer-model url="https://huggingface.co/Snowflake/snowflake-arctic-embed-xs/raw/main/tokenizer.json"/>
+            <transformer-model model-id="snowflake-arctic-embed-xs"/>
             <normalize>true</normalize>
             <pooling-strategy>cls</pooling-strategy>
+            <prepend>
+                <query>Represent this sentence for searching relevant passages: </query>
+            </prepend>
         </component>
         
         <!--

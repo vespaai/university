@@ -15,7 +15,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--input",
-        default="../../ch1/dataset/products.jsonl",
+        default="../../../ch1/dataset/products.jsonl",
         help="Path to source products JSONL file.",
     )
     parser.add_argument(

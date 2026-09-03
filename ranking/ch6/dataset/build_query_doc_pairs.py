@@ -52,6 +52,19 @@ def parse_args() -> argparse.Namespace:
         help="Output CSV path for pair metadata.",
     )
     parser.add_argument(
+        "--query-prefix",
+        default="Represent this sentence for searching relevant passages: ",
+        help=(
+            "Prefix prepended to the query side (anchor) of each pair. "
+            "snowflake-arctic-embed-xs is asymmetric: it expects this prefix on "
+            "queries and nothing on documents. It MUST match the <prepend><query> "
+            "in the embedder component in services.xml - training on bare queries "
+            "and then serving prefixed ones (or vice versa) is a train/serve "
+            "mismatch that costs ndcg. Pass --query-prefix '' to train on bare "
+            "queries, and drop <prepend> from services.xml to match."
+        ),
+    )
+    parser.add_argument(
         "--positive-rating",
         type=int,
         default=3,
@@ -183,6 +196,9 @@ def main() -> int:
                 skipped_short_query += 1
                 continue
 
+            # length checks above apply to the raw query; the model sees the prefix
+            anchor_text = args.query_prefix + query_text
+
             product = product_map.get(document_id)
             if product is None:
                 skipped_missing_product += 1
@@ -196,7 +212,7 @@ def main() -> int:
             else:
                 candidates_by_query[query_id].append(
                     {
-                        "anchor": query_text,
+                        "anchor": anchor_text,
                         "positive": title,
                         "query_id": query_id,
                         "document_id": document_id,
@@ -212,7 +228,7 @@ def main() -> int:
             else:
                 candidates_by_query[query_id].append(
                     {
-                        "anchor": query_text,
+                        "anchor": anchor_text,
                         "positive": description,
                         "query_id": query_id,
                         "document_id": document_id,
