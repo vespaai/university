@@ -1,6 +1,6 @@
-pyvespa>=1.2.5
+pyvespa>=1.2.7
 requests>=2.34.2
-tqdm>=4.70.0
+tqdm>=4.70.1
 python-dotenv>=1.2.3
-urllib3>=2.7.0
-tornado>=6.5.8
+urllib3>=2.8.0
+tornado>=6.5.10
